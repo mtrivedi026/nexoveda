@@ -1,0 +1,244 @@
+{
+  "users": [
+    {
+      "_id": "agent-aria",
+      "name": "Aria Reynolds",
+      "email": "aria@nexoveda.com",
+      "role": "agent",
+      "specialty": "herbal",
+      "gender": "female",
+      "status": "online",
+      "avatarUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "loyaltyPoints": 0,
+      "createdAt": "2026-06-10T11:16:38.557Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    },
+    {
+      "_id": "agent-liam",
+      "name": "Liam Carter",
+      "email": "liam@nexoveda.com",
+      "role": "agent",
+      "specialty": "herbal",
+      "gender": "male",
+      "status": "online",
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "loyaltyPoints": 0,
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    },
+    {
+      "_id": "agent-elena",
+      "name": "Dr. Elena Rostova",
+      "email": "elena@nexoveda.com",
+      "role": "agent",
+      "specialty": "medical",
+      "gender": "female",
+      "status": "online",
+      "avatarUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80",
+      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "loyaltyPoints": 0,
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    },
+    {
+      "_id": "agent-marcus",
+      "name": "Dr. Marcus Vance",
+      "email": "marcus@nexoveda.com",
+      "role": "agent",
+      "specialty": "medical",
+      "gender": "male",
+      "status": "online",
+      "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
+      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "loyaltyPoints": 0,
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    },
+    {
+      "_id": "admin-main",
+      "name": "Nexoveda Admin",
+      "email": "admin@nexoveda.com",
+      "role": "admin",
+      "specialty": null,
+      "gender": null,
+      "status": "offline",
+      "avatarUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "loyaltyPoints": 0,
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    },
+    {
+      "_id": "customer-test",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "customer",
+      "specialty": null,
+      "gender": "male",
+      "status": "offline",
+      "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "loyaltyPoints": 50,
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    }
+  ],
+  "conversations": [
+    {
+      "_id": "tlc96hkn3vy1f6bv4jbze",
+      "customerName": "Anonymous Customer",
+      "customerAge": 28,
+      "customerGender": "male",
+      "preferredSpecialty": "medical",
+      "preferredGender": "male",
+      "status": "closed",
+      "createdAt": "2026-06-10T11:19:33.765Z",
+      "updatedAt": "2026-06-10T11:19:37.156Z",
+      "agent": "agent-marcus"
+    }
+  ],
+  "messages": [],
+  "products": [
+    {
+      "_id": "prod-adivance",
+      "name": "Adivance Capsule",
+      "price": 29.99,
+      "description": "A premium, clinical-grade wellness supplement crafted with standardized extracts of Purified Shilajit, Ashwagandha, and Gokshura. Formulated to enhance stamina, recovery, performance, and daily vitality.",
+      "category": "Supplements",
+      "image": "/image/adivance-capsule.jpeg",
+      "ingredients": [
+        "Purified Shilajit (150mg)",
+        "KSM-66 Ashwagandha (200mg)",
+        "Safed Musli (100mg)",
+        "Gokshura Extract (100mg)"
+      ],
+      "benefits": [
+        "Boosts physical stamina and energy",
+        "Improves muscle recovery times",
+        "Combats fatigue and daily stress",
+        "Optimizes overall power and focus"
+      ],
+      "rating": 4.9,
+      "reviewCount": 15,
+      "discountPercent": 10,
+      "suggestedUse": "Take 1 to 2 capsules daily with milk or warm water after meals, or as recommended by your health specialist.",
+      "sku": "NEX-ADV-001",
+      "reviews": [
+        {
+          "author": "Fahad Patel",
+          "location": "London, UK",
+          "rating": 5,
+          "text": "Excellent capsules for gym energy. Felt a difference within a week.",
+          "date": "2026-06-01"
+        },
+        {
+          "author": "John Doe",
+          "location": "New York, USA",
+          "rating": 5,
+          "text": "Completely natural and safe stamina booster. Fast shipping.",
+          "date": "2026-05-24"
+        }
+      ],
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    },
+    {
+      "_id": "prod-eucalyptus",
+      "name": "Organic Eucalyptus & Honey Elixir",
+      "price": 14.99,
+      "description": "A soothing herbal syrup made with premium organic honey and wild eucalyptus oil. Formulated to support respiratory passageways and boost throat immunity.",
+      "category": "Elixirs",
+      "image": "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=500&auto=format&fit=crop&q=80",
+      "ingredients": [
+        "Organic Mountain Honey",
+        "Eucalyptus Globulus Leaf Oil",
+        "Ginger Root Extract",
+        "Lemon Myrtle Extract"
+      ],
+      "benefits": [
+        "Soothes respiratory congestion",
+        "Anti-inflammatory action",
+        "Rich in daily antioxidants"
+      ],
+      "rating": 4.8,
+      "reviewCount": 32,
+      "discountPercent": 0,
+      "suggestedUse": "Take 1 tablespoon daily, or stir into a cup of hot herbal tea.",
+      "sku": "NEX-EUC-002",
+      "reviews": [
+        {
+          "author": "Pooja Sharma",
+          "location": "Singapore",
+          "rating": 5,
+          "text": "Perfect for seasonal cold protection. The honey quality is top-notch.",
+          "date": "2026-05-18"
+        }
+      ],
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    },
+    {
+      "_id": "prod-sleep-tea",
+      "name": "Dreamtime Lemon Myrtle Sleep Tea",
+      "price": 9.99,
+      "description": "An aromatic blend of native Australian Lemon Myrtle, organic Chamomile, and lavender florets. Naturally caffeine-free and designed to promote a state of deep sleep relaxation.",
+      "category": "Teas",
+      "image": "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?w=500&auto=format&fit=crop&q=80",
+      "ingredients": [
+        "Organic Lemon Myrtle Leaves",
+        "Chamomile Flowers",
+        "Lavender Florets",
+        "Valerian Root Extract"
+      ],
+      "benefits": [
+        "Promotes deep sleep relaxation",
+        "Calms stressful nervous systems",
+        "Reduces mild insomnia symptoms"
+      ],
+      "rating": 4.7,
+      "reviewCount": 48,
+      "discountPercent": 15,
+      "suggestedUse": "Infuse 1 tea bag in a cup of boiling water for 5-7 minutes. Enjoy 30 minutes before bedtime.",
+      "sku": "NEX-DRE-003",
+      "reviews": [
+        {
+          "author": "Rahul Verma",
+          "location": "Sydney, Australia",
+          "rating": 5,
+          "text": "Smells amazing. Really helps me unwind after a long day.",
+          "date": "2026-05-30"
+        }
+      ],
+      "createdAt": "2026-06-10T11:16:38.559Z",
+      "updatedAt": "2026-06-10T11:16:38.559Z"
+    }
+  ],
+  "orders": [
+    {
+      "_id": "ord-gl01829",
+      "customerName": "John Doe",
+      "customerEmail": "john@example.com",
+      "customerPhone": "+15550199",
+      "addressLine1": "123 Main St",
+      "suburb": "New York",
+      "state": "New York, USA",
+      "postcode": "10001",
+      "items": [
+        {
+          "productId": "prod-adivance",
+          "name": "Adivance Capsule",
+          "quantity": 2,
+          "price": 29.99
+        }
+      ],
+      "subtotal": 53.98,
+      "shippingCost": 0,
+      "total": 53.98,
+      "status": "pending",
+      "createdAt": "2026-06-10T09:16:38.559Z",
+      "updatedAt": "2026-06-10T09:16:38.559Z"
+    }
+  ]
+}
