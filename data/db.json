@@ -9,10 +9,10 @@
       "gender": "female",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T11:16:38.557Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.884Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     },
     {
       "_id": "agent-liam",
@@ -23,10 +23,10 @@
       "gender": "male",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     },
     {
       "_id": "agent-elena",
@@ -37,10 +37,10 @@
       "gender": "female",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     },
     {
       "_id": "agent-marcus",
@@ -51,10 +51,10 @@
       "gender": "male",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     },
     {
       "_id": "admin-main",
@@ -65,10 +65,10 @@
       "gender": null,
       "status": "offline",
       "avatarUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     },
     {
       "_id": "customer-test",
@@ -79,26 +79,13 @@
       "gender": "male",
       "status": "offline",
       "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$OdnEeV5AXBKrBqP2X0gqnefUDU6Wi/4DhXjARX38iUv61nqoCPkU2",
+      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
       "loyaltyPoints": 50,
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     }
   ],
-  "conversations": [
-    {
-      "_id": "tlc96hkn3vy1f6bv4jbze",
-      "customerName": "Anonymous Customer",
-      "customerAge": 28,
-      "customerGender": "male",
-      "preferredSpecialty": "medical",
-      "preferredGender": "male",
-      "status": "closed",
-      "createdAt": "2026-06-10T11:19:33.765Z",
-      "updatedAt": "2026-06-10T11:19:37.156Z",
-      "agent": "agent-marcus"
-    }
-  ],
+  "conversations": [],
   "messages": [],
   "products": [
     {
@@ -141,8 +128,8 @@
           "date": "2026-05-24"
         }
       ],
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     },
     {
       "_id": "prod-eucalyptus",
@@ -176,8 +163,8 @@
           "date": "2026-05-18"
         }
       ],
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     },
     {
       "_id": "prod-sleep-tea",
@@ -211,8 +198,8 @@
           "date": "2026-05-30"
         }
       ],
-      "createdAt": "2026-06-10T11:16:38.559Z",
-      "updatedAt": "2026-06-10T11:16:38.559Z"
+      "createdAt": "2026-06-10T13:12:09.885Z",
+      "updatedAt": "2026-06-10T13:12:09.885Z"
     }
   ],
   "orders": [
@@ -237,8 +224,8 @@
       "shippingCost": 0,
       "total": 53.98,
       "status": "pending",
-      "createdAt": "2026-06-10T09:16:38.559Z",
-      "updatedAt": "2026-06-10T09:16:38.559Z"
+      "createdAt": "2026-06-10T11:12:09.886Z",
+      "updatedAt": "2026-06-10T11:12:09.886Z"
     }
   ]
 }
