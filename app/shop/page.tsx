@@ -80,7 +80,7 @@ export default function ShopPage() {
             Natural Health <span className="text-yellow-400">Catalog</span>
           </h1>
           <p className="text-emerald-300 mt-3 text-base md:text-lg">
-            Standardized herbal formulas with verified quality, shipped directly to you across India.
+            Standardized herbal formulas with verified quality, shipped directly to you worldwide.
           </p>
         </div>
       </section>
@@ -298,7 +298,7 @@ export default function ShopPage() {
 
       {/* Footer */}
       <footer className="bg-emerald-950/20 border-t border-emerald-900/30 py-8 text-center text-xs text-emerald-600 mt-12">
-        © 2026 Nexoveda India. Standardized Natural Formulations. All rights reserved.
+        © 2026 Nexoveda Global. Standardized Natural Formulations. All rights reserved.
       </footer>
     </div>
   );

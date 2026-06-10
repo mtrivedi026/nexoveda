@@ -242,7 +242,7 @@ export default function DashboardPage() {
                         <span className={`text-[10px] font-bold ${order.status === 'shipped' || order.status === 'delivered' ? 'text-white' : 'text-gray-500'}`}>
                           Dispatched
                         </span>
-                        <span className="text-[8px] text-gray-500 block">India Post / Courier</span>
+                        <span className="text-[8px] text-gray-500 block">DHL / Global Mail / Courier</span>
                       </div>
 
                       {/* Step 3: Delivered */}
@@ -273,7 +273,7 @@ export default function DashboardPage() {
 
       {/* Footer */}
       <footer className="bg-emerald-950/20 border-t border-emerald-900/30 py-8 text-center text-xs text-emerald-600 mt-12">
-        © 2026 Nexoveda India. Standardized Natural Formulations. All rights reserved.
+        © 2026 Nexoveda Global. Standardized Natural Formulations. All rights reserved.
       </footer>
     </div>
   );

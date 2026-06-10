@@ -329,7 +329,7 @@ export default function CartPage() {
 
       {/* Footer */}
       <footer className="bg-emerald-950/20 border-t border-emerald-900/30 py-8 text-center text-xs text-emerald-600 mt-12">
-        © 2026 Nexoveda India. Standardized Natural Formulations. All rights reserved.
+        © 2026 Nexoveda Global. Standardized Natural Formulations. All rights reserved.
       </footer>
     </div>
   );

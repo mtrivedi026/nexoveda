@@ -63,7 +63,6 @@ export default function LoginPage() {
         <Link href="/" className="flex items-center gap-2">
           <span className="text-3xl">🌿</span>
           <span className="text-2xl font-bold text-yellow-400 tracking-tight">Nexoveda</span>
-          <span className="text-xs uppercase bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800 font-semibold">India</span>
         </Link>
         <Link href="/" className="text-sm text-emerald-400 hover:text-yellow-400 transition-colors">
           Back to Store
@@ -79,7 +78,7 @@ export default function LoginPage() {
             </h2>
             <p className="text-sm text-emerald-400 mt-2">
               {isRegister 
-                ? 'Join Nexoveda India wellness community' 
+                ? 'Join Nexoveda Global wellness community' 
                 : 'Access your consultation dashboard & orders'}
             </p>
           </div>
@@ -165,7 +164,7 @@ export default function LoginPage() {
 
       {/* Footer */}
       <footer className="py-6 border-t border-emerald-950/40 text-center text-xs text-emerald-600">
-        © 2026 Nexoveda India. Standardized Natural Formulations. All rights reserved.
+        © 2026 Nexoveda Global. Standardized Natural Formulations. All rights reserved.
       </footer>
     </div>
   );
