@@ -9,7 +9,7 @@ const cors = require('cors');
 
 dotenv.config();
 
-const dev = process.argv.includes('--production') ? false : (process.env.NODE_ENV !== 'production');
+const dev = process.env.NODE_ENV === 'development' || (process.env.NODE_ENV !== 'production' && !process.env.PORT && !process.env.MONGODB_URI);
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
