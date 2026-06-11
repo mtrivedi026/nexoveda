@@ -1,7 +1,6 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const next = require('next');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
@@ -10,8 +9,14 @@ const cors = require('cors');
 dotenv.config();
 
 const dev = process.env.NODE_ENV === 'development' || (process.env.NODE_ENV !== 'production' && !process.env.PORT && !process.env.MONGODB_URI);
-const nextApp = next({ dev });
-const handle = nextApp.getRequestHandler();
+const isStandalone = process.env.STANDALONE_BACKEND && process.env.STANDALONE_BACKEND.replace(/['"]/g, '') === 'true';
+
+let nextApp, handle;
+if (!isStandalone) {
+  const next = require('next');
+  nextApp = next({ dev });
+  handle = nextApp.getRequestHandler();
+}
 
 const port = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'nexoveda_super_secret_session_key_2026';
@@ -20,7 +25,11 @@ const JWT_SECRET = process.env.JWT_SECRET || 'nexoveda_super_secret_session_key_
 const db = require('./lib/db');
 const { connectDB, User, Product, Conversation, Message, Order } = db;
 
-nextApp.prepare().then(async () => {
+async function startServer() {
+  if (!isStandalone) {
+    await nextApp.prepare();
+  }
+
   const app = express();
   const server = http.createServer(app);
   
@@ -655,12 +664,25 @@ nextApp.prepare().then(async () => {
   });
 
   // Catch-all
-  app.all(/.*/, (req, res) => {
-    return handle(req, res);
-  });
+  if (isStandalone) {
+    app.all(/.*/, (req, res) => {
+      res.status(404).json({ message: 'API Endpoint not found in standalone backend' });
+    });
 
-  server.listen(port, (err) => {
-    if (err) throw err;
-    console.log(`🚀 Nexoveda Web Server running at http://localhost:${port} in ${dev ? 'development' : 'production'} mode`);
-  });
-});
+    server.listen(port, (err) => {
+      if (err) throw err;
+      console.log(`🚀 Standalone Backend API Server running at http://localhost:${port}`);
+    });
+  } else {
+    app.all(/.*/, (req, res) => {
+      return handle(req, res);
+    });
+
+    server.listen(port, (err) => {
+      if (err) throw err;
+      console.log(`🚀 Nexoveda Web Server running at http://localhost:${port} in ${dev ? 'development' : 'production'} mode`);
+    });
+  }
+}
+
+startServer().catch(console.error);
