@@ -28,19 +28,17 @@ nextApp.prepare().then(async () => {
   await connectDB();
 
   // Auto-seed if database is empty
-  if (!db.isMock) {
-    try {
-      const products = await Product.find({});
-      if (products.length === 0) {
-        console.log('📭 Live database appears to be empty. Running auto-seed...');
-        const { seedDatabase } = require('./lib/seed');
-        await seedDatabase(db);
-      } else {
-        console.log(`📊 Found ${products.length} products in database. Auto-seed skipped.`);
-      }
-    } catch (seedErr) {
-      console.error('⚠️ Auto-seeding check failed:', seedErr);
+  try {
+    const products = await Product.find({});
+    if (products.length === 0) {
+      console.log('📭 Database appears to be empty. Running auto-seed...');
+      const { seedDatabase } = require('./lib/seed');
+      await seedDatabase(db);
+    } else {
+      console.log(`📊 Found ${products.length} products in database. Auto-seed skipped.`);
     }
+  } catch (seedErr) {
+    console.error('⚠️ Auto-seeding check failed:', seedErr);
   }
 
   // Socket.io integration
