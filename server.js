@@ -33,22 +33,23 @@ async function startServer() {
   const app = express();
   const server = http.createServer(app);
   
-  // Connect to database
-  await connectDB();
-
-  // Auto-seed if database is empty
-  try {
-    const products = await Product.find({});
-    if (products.length === 0) {
-      console.log('📭 Database appears to be empty. Running auto-seed...');
-      const { seedDatabase } = require('./lib/seed');
-      await seedDatabase(db);
-    } else {
-      console.log(`📊 Found ${products.length} products in database. Auto-seed skipped.`);
+  // Connect to database in the background (prevent blocking server listen)
+  connectDB().then(async () => {
+    try {
+      const products = await Product.find({});
+      if (products.length === 0) {
+        console.log('📭 Database appears to be empty. Running auto-seed...');
+        const { seedDatabase } = require('./lib/seed');
+        await seedDatabase(db);
+      } else {
+        console.log(`📊 Found ${products.length} products in database. Auto-seed skipped.`);
+      }
+    } catch (seedErr) {
+      console.error('⚠️ Auto-seeding check failed:', seedErr.message || seedErr);
     }
-  } catch (seedErr) {
-    console.error('⚠️ Auto-seeding check failed:', seedErr);
-  }
+  }).catch((err) => {
+    console.error('⚠️ Database connection failed in background:', err.message || err);
+  });
 
   // Socket.io integration
   const io = new Server(server, {
