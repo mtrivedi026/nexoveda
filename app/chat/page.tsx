@@ -345,7 +345,7 @@ export default function ChatPage() {
                           : 'bg-[#050e0a]/50 text-gray-300 border-emerald-900/40 hover:bg-emerald-950/50'
                       }`}
                     >
-                      {g === 'any' ? 'No Preference' : g}
+                      {g === 'any' ? 'Couple' : g}
                     </button>
                   ))}
                 </div>
