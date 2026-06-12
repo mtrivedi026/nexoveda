@@ -19,20 +19,48 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json(
-        { message: 'Invalid credentials.' },
-        { status: 400 }
-      );
+      try {
+        const { syncAgents } = db as any;
+        if (syncAgents) {
+          await syncAgents(db);
+          user = await User.findOne({ email });
+        }
+      } catch (syncErr) {
+        console.warn('Self-healing sync failed:', syncErr);
+      }
+      
+      if (!user) {
+        return NextResponse.json(
+          { message: 'Invalid credentials.' },
+          { status: 400 }
+        );
+      }
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    let isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return NextResponse.json(
-        { message: 'Invalid credentials.' },
-        { status: 400 }
-      );
+      try {
+        const { syncAgents } = db as any;
+        if (syncAgents) {
+          await syncAgents(db);
+          const retriedUser = await User.findOne({ email });
+          if (retriedUser) {
+            user = retriedUser;
+            isMatch = await bcrypt.compare(password, user.password);
+          }
+        }
+      } catch (syncErr) {
+        console.warn('Self-healing sync failed:', syncErr);
+      }
+
+      if (!isMatch) {
+        return NextResponse.json(
+          { message: 'Invalid credentials.' },
+          { status: 400 }
+        );
+      }
     }
 
     // If user is support staff, set status to online upon login

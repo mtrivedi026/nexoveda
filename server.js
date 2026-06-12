@@ -120,11 +120,39 @@ async function startServer() {
       if (!email || !password) {
         return res.status(400).json({ message: 'Please provide email and password.' });
       }
-      const user = await User.findOne({ email });
-      if (!user) return res.status(400).json({ message: 'Invalid credentials.' });
+      let user = await User.findOne({ email });
+      if (!user) {
+        try {
+          const { syncAgents } = db;
+          if (syncAgents) {
+            await syncAgents(db);
+            user = await User.findOne({ email });
+          }
+        } catch (syncErr) {
+          console.warn('Self-healing sync failed:', syncErr);
+        }
+        
+        if (!user) return res.status(400).json({ message: 'Invalid credentials.' });
+      }
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ message: 'Invalid credentials.' });
+      let isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        try {
+          const { syncAgents } = db;
+          if (syncAgents) {
+            await syncAgents(db);
+            const retriedUser = await User.findOne({ email });
+            if (retriedUser) {
+              user = retriedUser;
+              isMatch = await bcrypt.compare(password, user.password);
+            }
+          }
+        } catch (syncErr) {
+          console.warn('Self-healing sync failed:', syncErr);
+        }
+        
+        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials.' });
+      }
 
       // If user is support staff, set status to online upon login
       if (user.role === 'agent') {
