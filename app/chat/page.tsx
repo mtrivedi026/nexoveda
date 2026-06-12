@@ -297,36 +297,6 @@ export default function ChatPage() {
                 </div>
               </div>
 
-              {/* Specialist Specialty choice */}
-              <div>
-                <label className="block text-[10px] font-semibold uppercase tracking-wider text-emerald-400 mb-2">
-                  Choose Advisor Specialist Type
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setSpecialty('herbal')}
-                    className={`py-3.5 border rounded-2xl text-xs font-bold transition-all ${
-                      specialty === 'herbal'
-                        ? 'bg-yellow-500 text-black border-yellow-500'
-                        : 'bg-[#050e0a]/50 text-gray-300 border-emerald-900/40 hover:bg-emerald-950/50'
-                    }`}
-                  >
-                    🌿 Herbal Expert Staff
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSpecialty('medical')}
-                    className={`py-3.5 border rounded-2xl text-xs font-bold transition-all ${
-                      specialty === 'medical'
-                        ? 'bg-yellow-500 text-black border-yellow-500'
-                        : 'bg-[#050e0a]/50 text-gray-300 border-emerald-900/40 hover:bg-emerald-950/50'
-                    }`}
-                  >
-                    👩‍⚕️ Medical Doctor GP
-                  </button>
-                </div>
-              </div>
 
               {/* Specialist Gender preference */}
               <div>
