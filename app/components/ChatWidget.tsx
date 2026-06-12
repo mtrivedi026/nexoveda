@@ -106,14 +106,59 @@ export default function ChatWidget() {
   }, [room?._id, socket]);
 
   useEffect(() => {
-    if (room && room.status === 'active') {
-      fetch(`/api/chats/rooms/${room._id}/messages`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) setMessages(data);
-        })
-        .catch(console.error);
+    let interval: any;
+    if (room && room.status !== 'closed') {
+      const pollRoomStatus = () => {
+        fetch(`/api/chats/rooms/${room._id}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data._id === room._id) {
+              const currentAgentId = room.agent && typeof room.agent === 'object' ? room.agent._id : room.agent;
+              const newAgentId = data.agent && typeof data.agent === 'object' ? data.agent._id : data.agent;
+              
+              if (data.status !== room.status || currentAgentId !== newAgentId) {
+                setRoom(data);
+                if (data.status === 'closed') {
+                  setRoom(null);
+                  setMessages([]);
+                  alert('Consultation closed by matched advisor.');
+                }
+              }
+            }
+          })
+          .catch(console.error);
+      };
+
+      pollRoomStatus();
+      interval = setInterval(pollRoomStatus, 3000);
     }
+    return () => clearInterval(interval);
+  }, [room?._id, room?.status, room?.agent]);
+
+  useEffect(() => {
+    let interval: any;
+    if (room && room.status === 'active') {
+      const pollMessages = () => {
+        fetch(`/api/chats/rooms/${room._id}/messages`)
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data)) {
+              setMessages(prev => {
+                const newMsgs = data.filter(dm => !prev.some(pm => pm._id === dm._id));
+                if (newMsgs.length > 0) {
+                  return [...prev, ...newMsgs];
+                }
+                return prev;
+              });
+            }
+          })
+          .catch(console.error);
+      };
+
+      pollMessages();
+      interval = setInterval(pollMessages, 3000);
+    }
+    return () => clearInterval(interval);
   }, [room?._id, room?.status]);
 
   useEffect(() => {
@@ -188,23 +233,44 @@ export default function ChatWidget() {
     }
   };
 
-  const handleSendMessage = (e?: React.FormEvent, customText?: string) => {
+  const handleSendMessage = async (e?: React.FormEvent, customText?: string) => {
     if (e) e.preventDefault();
     const textToSend = customText || msgInput;
     if (!textToSend.trim() || !room) return;
 
-    if (socket) {
-      socket.emit('send-msg', {
-        roomId: room._id,
-        senderId: 'anonymous-customer',
-        senderName: 'Anonymous Customer',
-        text: textToSend,
-        attachmentUrl: null
-      });
-    }
-
     if (!customText) setMsgInput('');
     handleTyping(false);
+
+    try {
+      const res = await fetch(`/api/chats/rooms/${room._id}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender: 'anonymous-customer',
+          senderName: 'Anonymous Customer',
+          text: textToSend,
+          attachmentUrl: null
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessages(prev => {
+          if (prev.some(m => m._id === data._id)) return prev;
+          return [...prev, data];
+        });
+      }
+    } catch (err) {
+      console.error('Failed to send message via HTTP:', err);
+      if (socket) {
+        socket.emit('send-msg', {
+          roomId: room._id,
+          senderId: 'anonymous-customer',
+          senderName: 'Anonymous Customer',
+          text: textToSend,
+          attachmentUrl: null
+        });
+      }
+    }
   };
 
   const simulateAttachment = () => {
@@ -218,15 +284,37 @@ export default function ChatWidget() {
       body: JSON.stringify({ filename })
     })
       .then(res => res.json())
-      .then((data) => {
-        if (socket) {
-          socket.emit('send-msg', {
-            roomId: room._id,
-            senderId: 'anonymous-customer',
-            senderName: 'Anonymous Customer',
-            text: `Uploaded symptom image: ${filename}`,
-            attachmentUrl: data.fileUrl
+      .then(async (data) => {
+        const textToSend = `Uploaded symptom image: ${filename}`;
+        try {
+          const resMsg = await fetch(`/api/chats/rooms/${room._id}/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sender: 'anonymous-customer',
+              senderName: 'Anonymous Customer',
+              text: textToSend,
+              attachmentUrl: data.fileUrl
+            })
           });
+          const msgData = await resMsg.json();
+          if (resMsg.ok) {
+            setMessages(prev => {
+              if (prev.some(m => m._id === msgData._id)) return prev;
+              return [...prev, msgData];
+            });
+          }
+        } catch (err) {
+          console.error('Failed to send attachment message via HTTP:', err);
+          if (socket) {
+            socket.emit('send-msg', {
+              roomId: room._id,
+              senderId: 'anonymous-customer',
+              senderName: 'Anonymous Customer',
+              text: textToSend,
+              attachmentUrl: data.fileUrl
+            });
+          }
         }
       })
       .catch(console.error);

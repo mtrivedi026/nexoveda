@@ -65,7 +65,18 @@ export default function AgentPage() {
     })
       .then(res => res.json())
       .then((data) => {
-        if (Array.isArray(data)) setRooms(data);
+        if (Array.isArray(data)) {
+          setRooms(data);
+          // If activeRoom is set, check if it still exists in the active/pending rooms list
+          if (activeRoom) {
+            const stillExists = data.some(r => r._id === activeRoom._id);
+            if (!stillExists) {
+              setActiveRoom(null);
+              setMessages([]);
+              alert('This consultation has been closed by the customer.');
+            }
+          }
+        }
         setLoadingRooms(false);
       })
       .catch(err => {
@@ -85,22 +96,49 @@ export default function AgentPage() {
     }
   }, [user, authLoading, token]);
 
-  // Handle active room messages loading
+  // Poll rooms list every 5 seconds to get new pending/claimed chats
   useEffect(() => {
+    if (!token || !user || user.role !== 'agent') return;
+    const interval = setInterval(() => {
+      loadData();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [token, user, activeRoom?._id]);
+
+  // Handle active room messages loading and polling
+  useEffect(() => {
+    let interval: any;
     if (activeRoom) {
-      fetch(`/api/chats/rooms/${activeRoom._id}/messages`)
-        .then(res => res.json())
-        .then((data) => {
-          if (Array.isArray(data)) setMessages(data);
-          if (socket) {
-            socket.emit('join-room', { roomId: activeRoom._id });
-          }
-        })
-        .catch(console.error);
+      const pollMessages = () => {
+        fetch(`/api/chats/rooms/${activeRoom._id}/messages`)
+          .then(res => res.json())
+          .then((data) => {
+            if (Array.isArray(data)) {
+              setMessages(prev => {
+                const newMsgs = data.filter(dm => !prev.some(pm => pm._id === dm._id));
+                if (newMsgs.length > 0) {
+                  return [...prev, ...newMsgs];
+                }
+                return prev;
+              });
+            }
+          })
+          .catch(console.error);
+      };
+
+      pollMessages();
+      interval = setInterval(pollMessages, 3000);
+
+      if (socket) {
+        socket.emit('join-room', { roomId: activeRoom._id });
+      }
     } else {
       setMessages([]);
     }
-  }, [activeRoom, socket]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeRoom?._id, socket]);
 
   // Scroll to bottom
   useEffect(() => {
@@ -190,23 +228,44 @@ export default function AgentPage() {
     }
   };
 
-  const handleSendMessage = (e?: React.FormEvent, customText?: string) => {
+  const handleSendMessage = async (e?: React.FormEvent, customText?: string) => {
     if (e) e.preventDefault();
     const textToSend = customText || msgInput;
     if (!textToSend.trim() || !activeRoom || !user) return;
 
-    if (socket) {
-      socket.emit('send-msg', {
-        roomId: activeRoom._id,
-        senderId: user.id,
-        senderName: user.name,
-        text: textToSend,
-        attachmentUrl: null
-      });
-    }
-
     if (!customText) setMsgInput('');
     handleTyping(false);
+
+    try {
+      const res = await fetch(`/api/chats/rooms/${activeRoom._id}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender: user.id,
+          senderName: user.name,
+          text: textToSend,
+          attachmentUrl: null
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessages(prev => {
+          if (prev.some(m => m._id === data._id)) return prev;
+          return [...prev, data];
+        });
+      }
+    } catch (err) {
+      console.error('Failed to send message via HTTP:', err);
+      if (socket) {
+        socket.emit('send-msg', {
+          roomId: activeRoom._id,
+          senderId: user.id,
+          senderName: user.name,
+          text: textToSend,
+          attachmentUrl: null
+        });
+      }
+    }
   };
 
   const handleCloseChat = async () => {
@@ -237,15 +296,37 @@ export default function AgentPage() {
       body: JSON.stringify({ filename })
     })
       .then(res => res.json())
-      .then((data) => {
-        if (socket) {
-          socket.emit('send-msg', {
-            roomId: activeRoom._id,
-            senderId: user.id,
-            senderName: user.name,
-            text: `Attached Document Log: ${filename}`,
-            attachmentUrl: data.fileUrl
+      .then(async (data) => {
+        const textToSend = `Attached Document Log: ${filename}`;
+        try {
+          const resMsg = await fetch(`/api/chats/rooms/${activeRoom._id}/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sender: user.id,
+              senderName: user.name,
+              text: textToSend,
+              attachmentUrl: data.fileUrl
+            })
           });
+          const msgData = await resMsg.json();
+          if (resMsg.ok) {
+            setMessages(prev => {
+              if (prev.some(m => m._id === msgData._id)) return prev;
+              return [...prev, msgData];
+            });
+          }
+        } catch (err) {
+          console.error('Failed to send attachment message via HTTP:', err);
+          if (socket) {
+            socket.emit('send-msg', {
+              roomId: activeRoom._id,
+              senderId: user.id,
+              senderName: user.name,
+              text: textToSend,
+              attachmentUrl: data.fileUrl
+            });
+          }
         }
       })
       .catch(console.error);

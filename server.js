@@ -499,6 +499,23 @@ async function startServer() {
     }
   });
 
+  // Get Room Details
+  app.get('/api/chats/rooms/:roomId', async (req, res) => {
+    try {
+      const { roomId } = req.params;
+      const room = await Conversation.findById(roomId);
+      if (!room) return res.status(404).json({ message: 'Room not found.' });
+      
+      let populatedRoom = room;
+      if (typeof room.populate === 'function') {
+        populatedRoom = await room.populate('agent');
+      }
+      res.json(populatedRoom);
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to fetch room', error: err.message });
+    }
+  });
+
   // Manual assignment by Admin
   app.post('/api/chats/rooms/:roomId/assign', authenticateToken, async (req, res) => {
     try {
@@ -551,6 +568,36 @@ async function startServer() {
       res.json(updatedConv);
     } catch (err) {
       res.status(500).json({ message: 'Failed to close conversation.', error: err.message });
+    }
+  });
+
+  // POST Message (HTTP Polling fallback support)
+  app.post('/api/chats/rooms/:roomId/messages', async (req, res) => {
+    try {
+      const { roomId } = req.params;
+      const { sender, senderName, text, attachmentUrl } = req.body;
+
+      if (!sender || !senderName || !text) {
+        return res.status(400).json({ message: 'Missing sender, senderName, or text' });
+      }
+
+      const msg = await Message.create({
+        conversation: roomId,
+        sender,
+        senderName,
+        text,
+        attachmentUrl: attachmentUrl || null
+      });
+
+      await Conversation.findByIdAndUpdate(roomId, { lastMessageAt: new Date() });
+
+      // Broadcast to any active socket connection
+      io.to(roomId).emit('recv-msg', msg);
+      io.to('admins').emit('admin-recv-msg', msg);
+
+      res.status(201).json(msg);
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to send message', error: err.message });
     }
   });
 
