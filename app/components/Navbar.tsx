@@ -2,12 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useAuth, useCart } from '../providers';
+import { useAuth, useCart, useChat } from '../providers';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { cart } = useCart();
+  const { setChatOpen, setChatTab } = useChat();
   const router = useRouter();
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -34,7 +35,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-emerald-100/80">
             <Link href="/" className="hover:text-yellow-400 transition-colors">Home</Link>
             <Link href="/shop" className="hover:text-yellow-400 transition-colors">Shop Catalog</Link>
-            <Link href="/chat" className="hover:text-yellow-400 transition-colors">Talk to Health Consultant</Link>
+            <button onClick={() => { setChatTab('chat'); setChatOpen(true); }} className="hover:text-yellow-400 transition-colors bg-transparent border-none cursor-pointer">Talk to Health Consultant</button>
             <Link href="/dashboard" className="hover:text-yellow-400 transition-colors">My Dashboard</Link>
           </div>
 

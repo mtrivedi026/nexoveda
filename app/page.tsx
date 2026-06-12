@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
+import { useChat, useCart } from './providers';
 
 // Ingredients Data
 const INGREDIENTS = [
@@ -101,6 +102,8 @@ const FAQS = [
 ];
 
 export default function Home() {
+  const { setChatOpen, setChatTab } = useChat();
+  const { addToCart } = useCart();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
@@ -113,20 +116,23 @@ export default function Home() {
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactName || !contactPhone) return;
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setContactName('');
-      setContactPhone('');
-      setContactMsg('');
-      alert('Thank you! Our support team will contact you on WhatsApp shortly.');
-    }, 1500);
+    setChatTab('chat');
+    setChatOpen(true);
+    setContactName('');
+    setContactPhone('');
+    setContactMsg('');
   };
 
-  const openWhatsAppOrder = () => {
-    const text = encodeURIComponent("Hello Nexoveda, I would like to order the Adivance Capsule ($29.99). Please guide me with checkout.");
-    window.open(`https://wa.me/15550199?text=${text}`, '_blank'); // Mock Global WhatsApp Number
+  const triggerInAppCheckout = () => {
+    addToCart({
+      _id: 'prod-adivance',
+      name: 'Adivance Capsule',
+      price: 29.99,
+      image: '/image/adivance-capsule.jpeg',
+      category: 'Capsule'
+    });
+    setChatTab('checkout');
+    setChatOpen(true);
   };
 
   return (
@@ -186,17 +192,20 @@ export default function Home() {
             {/* CTAs */}
             <div className="flex flex-wrap gap-4 mt-10">
               <button 
-                onClick={openWhatsAppOrder}
+                onClick={triggerInAppCheckout}
                 className="bg-yellow-500 text-black px-8 py-4 rounded-xl font-bold text-base shadow-lg shadow-yellow-500/10 hover:bg-yellow-400 hover:shadow-yellow-400/20 transition-all cursor-pointer"
               >
-                Order on WhatsApp - $29.99
+                Order Adivance Capsule - $29.99
               </button>
-              <a 
-                href="#contact"
-                className="border border-emerald-800/80 bg-emerald-950/20 text-emerald-300 hover:text-white px-8 py-4 rounded-xl text-base font-semibold hover:border-emerald-700 hover:bg-emerald-950/50 transition-all text-center"
+              <button 
+                onClick={() => {
+                  setChatTab('chat');
+                  setChatOpen(true);
+                }}
+                className="border border-emerald-800/80 bg-emerald-950/20 text-emerald-300 hover:text-white px-8 py-4 rounded-xl text-base font-semibold hover:border-emerald-700 hover:bg-emerald-950/50 transition-all text-center cursor-pointer"
               >
                 Request Consultation
-              </a>
+              </button>
             </div>
           </div>
 
@@ -399,11 +408,11 @@ export default function Home() {
 
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-emerald-950 border border-emerald-900/50 flex items-center justify-center text-xl">
-                    💬
+                    🛒
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-emerald-400 uppercase tracking-wide">WhatsApp Order Desk</h4>
-                    <p onClick={openWhatsAppOrder} className="text-yellow-400 font-bold hover:underline cursor-pointer">+1 555-0199 (Click to Order)</p>
+                    <h4 className="text-sm font-semibold text-emerald-400 uppercase tracking-wide">Direct Order Desk</h4>
+                    <p onClick={triggerInAppCheckout} className="text-yellow-400 font-bold hover:underline cursor-pointer">Click here to Order Instantly</p>
                   </div>
                 </div>
 
@@ -469,7 +478,7 @@ export default function Home() {
                   type="submit" 
                   className="w-full bg-yellow-500 text-black py-4 rounded-xl font-bold text-base shadow-lg shadow-yellow-500/10 hover:bg-yellow-400 hover:shadow-yellow-400/20 active:scale-98 transition-all cursor-pointer"
                 >
-                  {formSubmitted ? 'Sending Request...' : 'Submit Callback Request'}
+                  Start Live Consultation Chat 💬
                 </button>
               </form>
             </div>

@@ -88,6 +88,22 @@ export function useSocket() {
   return context;
 }
 
+// --- CHAT WIDGET CONTEXT ---
+interface ChatContextType {
+  isChatOpen: boolean;
+  setChatOpen: (open: boolean) => void;
+  chatTab: 'chat' | 'checkout' | 'success';
+  setChatTab: (tab: 'chat' | 'checkout' | 'success') => void;
+}
+
+const ChatContext = createContext<ChatContextType | undefined>(undefined);
+
+export function useChat() {
+  const context = useContext(ChatContext);
+  if (!context) throw new Error('useChat must be used within a ChatProvider');
+  return context;
+}
+
 // --- PROVIDERS COMPONENT ---
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -100,6 +116,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const [redeemedPoints, setRedeemedPoints] = useState(0);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isChatOpen, setChatOpen] = useState(false);
+  const [chatTab, setChatTab] = useState<'chat' | 'checkout' | 'success'>('chat');
 
   // Load Auth & Cart from LocalStorage
   useEffect(() => {
@@ -311,7 +329,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         }}
       >
         <SocketContext.Provider value={{ socket, isConnected }}>
-          {children}
+          <ChatContext.Provider value={{ isChatOpen, setChatOpen, chatTab, setChatTab }}>
+            {children}
+          </ChatContext.Provider>
         </SocketContext.Provider>
       </CartContext.Provider>
     </AuthContext.Provider>
