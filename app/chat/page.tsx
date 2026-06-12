@@ -292,7 +292,7 @@ export default function ChatPage() {
                   >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="other">Prefer not to say</option>
+                    <option value="couple">Couple</option>
                   </select>
                 </div>
               </div>
