@@ -34,7 +34,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-emerald-100/80">
             <Link href="/" className="hover:text-yellow-400 transition-colors">Home</Link>
             <Link href="/shop" className="hover:text-yellow-400 transition-colors">Shop Catalog</Link>
-            <Link href="/chat" className="hover:text-yellow-400 transition-colors">Consult Doctor</Link>
+            <Link href="/chat" className="hover:text-yellow-400 transition-colors">Talk to Health Consultant</Link>
             <Link href="/dashboard" className="hover:text-yellow-400 transition-colors">My Dashboard</Link>
           </div>
 
