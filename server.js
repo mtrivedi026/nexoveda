@@ -383,16 +383,15 @@ async function startServer() {
         status: 'pending'
       });
 
-      // Matching algorithm
+      // Matching algorithm: Select strictly from our two allowed consultants
       const query = {
         role: 'agent',
-        specialty: preferredSpecialty
+        email: { $in: ['anamika@nexoveda.com', 'anil@nexoveda.com'] }
       };
-      if (!db.isMock) {
-        query.status = 'online';
-      }
-      if (preferredGender !== 'any') {
-        query.gender = preferredGender;
+      if (preferredGender === 'male') {
+        query.gender = 'male';
+      } else if (preferredGender === 'female') {
+        query.gender = 'female';
       }
 
       const onlineAgents = await User.find(query);
