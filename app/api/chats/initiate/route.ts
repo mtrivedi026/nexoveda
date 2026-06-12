@@ -16,6 +16,26 @@ export async function POST(request: Request) {
       );
     }
 
+    // Match agent directly
+    let selectedAgent = null;
+
+    if (preferredGender === 'male') {
+      selectedAgent = await User.findOne({ email: 'anil@nexoveda.com' });
+    } else if (preferredGender === 'female') {
+      selectedAgent = await User.findOne({ email: 'anamika@nexoveda.com' });
+    } else {
+      const anil = await User.findOne({ email: 'anil@nexoveda.com' });
+      const anamika = await User.findOne({ email: 'anamika@nexoveda.com' });
+
+      if (anil && anamika) {
+        const anilChats = (await Conversation.find({ agent: anil._id, status: 'active' })).length;
+        const anamikaChats = (await Conversation.find({ agent: anamika._id, status: 'active' })).length;
+        selectedAgent = anilChats <= anamikaChats ? anil : anamika;
+      } else {
+        selectedAgent = anil || anamika;
+      }
+    }
+
     // Create conversation
     let newConv = await Conversation.create({
       customerName: 'Anonymous Customer',
@@ -23,46 +43,9 @@ export async function POST(request: Request) {
       customerGender,
       preferredSpecialty,
       preferredGender,
-      status: 'pending'
+      agent: selectedAgent ? selectedAgent._id : null,
+      status: selectedAgent ? 'active' : 'pending'
     });
-
-    // Matching algorithm: Select strictly from our two allowed consultants
-    const query: any = {
-      role: 'agent',
-      email: { $in: ['anamika@nexoveda.com', 'anil@nexoveda.com'] }
-    };
-    if (preferredGender === 'male') {
-      query.gender = 'male';
-    } else if (preferredGender === 'female') {
-      query.gender = 'female';
-    }
-
-    const onlineAgents = await User.find(query);
-
-    if (onlineAgents.length > 0) {
-      let selectedAgent = null;
-      let minActiveChats = Infinity;
-
-      // Choose agent with least active conversations
-      for (const agent of onlineAgents) {
-        const activeChats = await Conversation.find({
-          agent: agent._id,
-          status: 'active'
-        });
-        if (activeChats.length < minActiveChats) {
-          minActiveChats = activeChats.length;
-          selectedAgent = agent;
-        }
-      }
-
-      if (selectedAgent) {
-        newConv = await Conversation.findByIdAndUpdate(
-          newConv._id,
-          { agent: selectedAgent._id, status: 'active' },
-          { new: true }
-        );
-      }
-    }
 
     return NextResponse.json(newConv, { status: 201 });
   } catch (err: any) {
