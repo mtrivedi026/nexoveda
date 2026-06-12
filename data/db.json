@@ -1,60 +1,32 @@
 {
   "users": [
     {
-      "_id": "agent-aria",
-      "name": "Aria Reynolds",
-      "email": "aria@nexoveda.com",
-      "role": "agent",
-      "specialty": "herbal",
-      "gender": "female",
-      "status": "online",
-      "avatarUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
-      "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T13:12:09.884Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
-    },
-    {
-      "_id": "agent-liam",
-      "name": "Liam Carter",
-      "email": "liam@nexoveda.com",
-      "role": "agent",
-      "specialty": "herbal",
-      "gender": "male",
-      "status": "online",
-      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
-      "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
-    },
-    {
-      "_id": "agent-elena",
-      "name": "Dr. Elena Rostova",
-      "email": "elena@nexoveda.com",
+      "_id": "agent-anamika",
+      "name": "Dr. Anamika Verma (Gyne)",
+      "email": "anamika@nexoveda.com",
       "role": "agent",
       "specialty": "medical",
       "gender": "female",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
+      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
+      "createdAt": "2026-06-12T08:38:42.477Z",
+      "updatedAt": "2026-06-12T09:01:33.909Z"
     },
     {
-      "_id": "agent-marcus",
-      "name": "Dr. Marcus Vance",
-      "email": "marcus@nexoveda.com",
+      "_id": "agent-anil",
+      "name": "Dr. Anil Singh (B.A.M.S.)",
+      "email": "anil@nexoveda.com",
       "role": "agent",
-      "specialty": "medical",
+      "specialty": "herbal",
       "gender": "male",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
+      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
+      "createdAt": "2026-06-12T08:38:42.477Z",
+      "updatedAt": "2026-06-12T09:01:33.923Z"
     },
     {
       "_id": "admin-main",
@@ -65,24 +37,10 @@
       "gender": null,
       "status": "offline",
       "avatarUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
+      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
       "loyaltyPoints": 0,
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
-    },
-    {
-      "_id": "customer-test",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "role": "customer",
-      "specialty": null,
-      "gender": "male",
-      "status": "offline",
-      "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$AaymlbiS8KoGOXo2IZAf7.3atxI0WB3MghvI34APVdsMK1MRkjFMm",
-      "loyaltyPoints": 50,
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
+      "createdAt": "2026-06-12T08:38:42.477Z",
+      "updatedAt": "2026-06-12T09:01:33.926Z"
     }
   ],
   "conversations": [],
@@ -128,8 +86,8 @@
           "date": "2026-05-24"
         }
       ],
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
+      "createdAt": "2026-06-12T08:38:42.477Z",
+      "updatedAt": "2026-06-12T08:38:42.477Z"
     },
     {
       "_id": "prod-eucalyptus",
@@ -163,8 +121,8 @@
           "date": "2026-05-18"
         }
       ],
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
+      "createdAt": "2026-06-12T08:38:42.477Z",
+      "updatedAt": "2026-06-12T08:38:42.477Z"
     },
     {
       "_id": "prod-sleep-tea",
@@ -198,8 +156,8 @@
           "date": "2026-05-30"
         }
       ],
-      "createdAt": "2026-06-10T13:12:09.885Z",
-      "updatedAt": "2026-06-10T13:12:09.885Z"
+      "createdAt": "2026-06-12T08:38:42.477Z",
+      "updatedAt": "2026-06-12T08:38:42.477Z"
     }
   ],
   "orders": [
@@ -224,8 +182,8 @@
       "shippingCost": 0,
       "total": 53.98,
       "status": "pending",
-      "createdAt": "2026-06-10T11:12:09.886Z",
-      "updatedAt": "2026-06-10T11:12:09.886Z"
+      "createdAt": "2026-06-12T06:38:42.477Z",
+      "updatedAt": "2026-06-12T06:38:42.477Z"
     }
   ]
 }

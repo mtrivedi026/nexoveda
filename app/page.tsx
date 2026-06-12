@@ -93,7 +93,7 @@ const FAQS = [
   },
   {
     q: 'How long does delivery take?',
-    a: 'Standard delivery is free on orders above $50.00 and takes 3-5 business days. We also offer express courier delivery to major regions within 24-48 hours.'
+    a: 'Standard delivery takes 3-5 business days. We also offer express courier delivery to major regions within 24-48 hours.'
   },
   {
     q: 'Is this product certified?',
