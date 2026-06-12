@@ -628,9 +628,9 @@ async function startServer() {
                 let replyText = "Hello! I am reviewing your symptoms. Please tell me more about your daily habits.";
                 
                 if (agent && agent.specialty === 'medical') {
-                  replyText = `As a Medical Doctor, I recommend taking Ashwagandha with warm milk after meals to lower cortisol levels and combat fatigue. How long have you been experiencing these symptoms?`;
+                  replyText = `Hello, I am Dr. Anamika Verma (Gyne). As a medical health consultant, I suggest KSM-66 Ashwagandha with warm milk after meals to lower stress and muscle fatigue. How can I support you today?`;
                 } else if (agent && agent.specialty === 'herbal') {
-                  replyText = `I suggest our Organic Eucalyptus Honey Elixir or Lemon Myrtle Sleep Tea before bedtime. Also, our standardized Shilajit has 98% purity, providing trace minerals to restore energy.`;
+                  replyText = `Greetings, I am Dr. Anil Singh (B.A.M.S.). I recommend organic Himalayan Shilajit for cellular energy, or Eucalyptus honey elixir for fatigue. Do you have any other recovery issues?`;
                 }
 
                 const replyMsg = await Message.create({
