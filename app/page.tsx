@@ -299,63 +299,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Nexoveda Brand Intro Section */}
-      <section className="py-20 md:py-28 bg-[#040f0a]/40 border-b border-emerald-950/20 relative">
-        <div className="absolute top-1/2 right-10 w-[300px] h-[300px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <span className="text-xs uppercase font-extrabold tracking-widest text-yellow-400">About Nexoveda</span>
-            <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
-              Holistic Wellness for Couples & Individuals
-            </h2>
-            <p className="text-gray-300 text-base leading-relaxed">
-              Nexoveda is a holistic wellness platform dedicated to supporting the physical, emotional, and relational health of married couples and individuals. We combine the ancient wisdom of Ayurveda with modern counselling practices to address the body, mind, emotions, and intimate relationships.
-            </p>
-            <div className="flex flex-wrap gap-4 pt-2">
-              <a 
-                href="/about" 
-                className="bg-emerald-900 border border-emerald-800 hover:border-yellow-400 text-yellow-400 px-6 py-3 rounded-xl text-xs font-bold transition-all"
-              >
-                Read Our Full Story & Mission ➔
-              </a>
-              <button 
-                onClick={() => { setChatTab('chat'); setChatOpen(true); }}
-                className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-3 rounded-xl text-xs font-bold shadow-lg transition-all"
-              >
-                Talk to a Consultant Free
-              </button>
-            </div>
-          </div>
-          <div className="bg-[#05140f] border border-emerald-900/35 p-8 rounded-3xl space-y-6 shadow-2xl relative overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-24 h-24 bg-yellow-500/5 rounded-full blur-xl"></div>
-            <h3 className="text-xl font-bold text-white">Why Choose Us?</h3>
-            <ul className="space-y-4">
-              <li className="flex gap-3 text-xs leading-normal">
-                <span className="text-yellow-400 text-sm">✓</span>
-                <div>
-                  <h4 className="font-bold text-emerald-300">Free Counselling Services</h4>
-                  <p className="text-gray-400 mt-0.5">All counselling is completely free and ongoing for couples and individuals.</p>
-                </div>
-              </li>
-              <li className="flex gap-3 text-xs leading-normal">
-                <span className="text-yellow-400 text-sm">✓</span>
-                <div>
-                  <h4 className="font-bold text-emerald-300">Complete Anonymity</h4>
-                  <p className="text-gray-400 mt-0.5">Discuss intimate queries safely without revealing your personal identity.</p>
-                </div>
-              </li>
-              <li className="flex gap-3 text-xs leading-normal">
-                <span className="text-yellow-400 text-sm">✓</span>
-                <div>
-                  <h4 className="font-bold text-emerald-300">Authentic Ayurveda</h4>
-                  <p className="text-gray-400 mt-0.5">Premium, natural elixirs manufactured in GMP-certified laboratories.</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
       {/* Reviews Section */}
       <section id="reviews" className="bg-[#030907]/90 py-20 md:py-28 border-b border-emerald-950/20">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -550,8 +493,6 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p>&copy; 2026 Nexoveda Wellness Global. All Rights Reserved.</p>
           <div className="flex gap-4">
-            <a href="/about" className="hover:underline">About Us</a>
-            <span>•</span>
             <span className="hover:underline cursor-pointer">Privacy Policy</span>
             <span>•</span>
             <span className="hover:underline cursor-pointer">Terms of Service</span>

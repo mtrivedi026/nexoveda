@@ -34,7 +34,6 @@ export default function Navbar() {
           {/* Links */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-emerald-100/80">
             <Link href="/" className="hover:text-yellow-400 transition-colors">Home</Link>
-            <Link href="/about" className="hover:text-yellow-400 transition-colors">About Us</Link>
             <Link href="/shop" className="hover:text-yellow-400 transition-colors">Shop Catalog</Link>
             <button onClick={() => { setChatTab('chat'); setChatOpen(true); }} className="hover:text-yellow-400 transition-colors bg-transparent border-none cursor-pointer">Talk to Health Consultant</button>
             <Link href="/dashboard" className="hover:text-yellow-400 transition-colors">My Dashboard</Link>
