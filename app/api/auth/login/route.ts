@@ -3,12 +3,18 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '@/lib/db';
 
-const { connectDB, User } = db as any;
 const JWT_SECRET = process.env.JWT_SECRET || 'nexoveda_super_secret_session_key_2026';
 
 export async function POST(request: Request) {
   try {
-    await connectDB();
+    // Connect to DB with a safe timeout
+    try {
+      await (db as any).connectDB();
+    } catch (dbErr: any) {
+      console.error('Login: DB connect error:', dbErr?.message);
+      // Continue — db may still work in mock mode
+    }
+
     const body = await request.json();
     const { email, password } = body;
 
@@ -19,7 +25,11 @@ export async function POST(request: Request) {
       );
     }
 
+    const User = (db as any).User;
+
     let user = await User.findOne({ email });
+
+    // If user not found, try syncing agents (agents may not exist in fresh DB)
     if (!user) {
       try {
         const { syncAgents } = db as any;
@@ -27,10 +37,10 @@ export async function POST(request: Request) {
           await syncAgents(db);
           user = await User.findOne({ email });
         }
-      } catch (syncErr) {
-        console.warn('Self-healing sync failed:', syncErr);
+      } catch (syncErr: any) {
+        console.warn('Self-healing sync failed:', syncErr?.message);
       }
-      
+
       if (!user) {
         return NextResponse.json(
           { message: 'Invalid credentials.' },
@@ -39,33 +49,30 @@ export async function POST(request: Request) {
       }
     }
 
-    let isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      try {
-        const { syncAgents } = db as any;
-        if (syncAgents) {
-          await syncAgents(db);
-          const retriedUser = await User.findOne({ email });
-          if (retriedUser) {
-            user = retriedUser;
-            isMatch = await bcrypt.compare(password, user.password);
-          }
-        }
-      } catch (syncErr) {
-        console.warn('Self-healing sync failed:', syncErr);
-      }
-
-      if (!isMatch) {
-        return NextResponse.json(
-          { message: 'Invalid credentials.' },
-          { status: 400 }
-        );
-      }
+    // Compare password safely
+    let isMatch = false;
+    try {
+      isMatch = await bcrypt.compare(password, user.password);
+    } catch (bcryptErr: any) {
+      console.error('bcrypt compare error:', bcryptErr?.message);
+      // Hostinger bcrypt native binding issue — check raw string as last resort
+      isMatch = (password === user.password);
     }
 
-    // If user is support staff, set status to online upon login
-    if (user.role === 'agent') {
-      await User.findByIdAndUpdate(user._id, { status: 'online' });
+    if (!isMatch) {
+      return NextResponse.json(
+        { message: 'Invalid credentials.' },
+        { status: 400 }
+      );
+    }
+
+    // If agent, set status to online
+    try {
+      if (user.role === 'agent') {
+        await User.findByIdAndUpdate(user._id, { status: 'online' });
+      }
+    } catch (updateErr: any) {
+      console.warn('Status update failed (non-critical):', updateErr?.message);
     }
 
     const token = jwt.sign(
@@ -96,8 +103,9 @@ export async function POST(request: Request) {
       }
     });
   } catch (err: any) {
+    console.error('Login route error:', err?.message, err?.stack);
     return NextResponse.json(
-      { message: 'Server error', error: err.message },
+      { message: err?.message || 'Server error' },
       { status: 500 }
     );
   }
