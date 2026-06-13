@@ -37,7 +37,7 @@ export default function ChatWidget() {
   // Lobby form states
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('male');
-  const [prefGender, setPrefGender] = useState<'male' | 'female' | 'any'>('any');
+  const [prefGender, setPrefGender] = useState<'male' | 'female'>('male');
 
   // Room states
   const [room, setRoom] = useState<Conversation | null>(null);
@@ -589,7 +589,6 @@ export default function ChatWidget() {
                     >
                       <option value="male">Male</option>
                       <option value="female">Female</option>
-                      <option value="couple">Couple</option>
                     </select>
                   </div>
 
@@ -597,8 +596,8 @@ export default function ChatWidget() {
                     <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                       Advisor Gender Preference *
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {(['male', 'female', 'any'] as const).map((g) => (
+                    <div className="grid grid-cols-2 gap-2">
+                      {(['male', 'female'] as const).map((g) => (
                         <button
                           key={g}
                           type="button"
@@ -609,7 +608,7 @@ export default function ChatWidget() {
                               : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
                           }`}
                         >
-                          {g === 'any' ? 'Couple' : g}
+                          {g}
                         </button>
                       ))}
                     </div>
