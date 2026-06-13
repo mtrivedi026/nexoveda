@@ -105,6 +105,9 @@ export default function ChatWidget() {
     }
   }, [room?._id, socket]);
 
+  // Shared message poller ref so we can trigger immediate refetch
+  const pollMessagesNow = useRef<(() => void) | null>(null);
+
   useEffect(() => {
     let interval: any;
     if (room && room.status !== 'closed') {
@@ -130,7 +133,7 @@ export default function ChatWidget() {
       };
 
       pollRoomStatus();
-      interval = setInterval(pollRoomStatus, 3000);
+      interval = setInterval(pollRoomStatus, 2000);
     }
     return () => clearInterval(interval);
   }, [room?._id, room?.status, room?.agent]);
@@ -155,8 +158,13 @@ export default function ChatWidget() {
           .catch(console.error);
       };
 
+      // Store ref so send function can trigger immediate re-poll
+      pollMessagesNow.current = pollMessages;
+
       pollMessages();
-      interval = setInterval(pollMessages, 3000);
+      interval = setInterval(pollMessages, 1500);
+    } else {
+      pollMessagesNow.current = null;
     }
     return () => clearInterval(interval);
   }, [room?._id, room?.status]);
@@ -241,6 +249,19 @@ export default function ChatWidget() {
     if (!customText) setMsgInput('');
     handleTyping(false);
 
+    // Optimistic: show message immediately before server confirms
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg: Message = {
+      _id: tempId,
+      conversation: room._id,
+      sender: 'anonymous-customer',
+      senderName: 'Anonymous Customer',
+      text: textToSend,
+      attachmentUrl: null,
+      createdAt: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
+
     try {
       const res = await fetch(`/api/chats/rooms/${room._id}/messages`, {
         method: 'POST',
@@ -254,13 +275,18 @@ export default function ChatWidget() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessages(prev => {
-          if (prev.some(m => m._id === data._id)) return prev;
-          return [...prev, data];
-        });
+        // Replace optimistic message with real one from server
+        setMessages(prev => prev.map(m => m._id === tempId ? data : m));
+        // Immediately trigger a re-poll so other side sees it ASAP
+        setTimeout(() => { pollMessagesNow.current?.(); }, 300);
+      } else {
+        // Remove optimistic on error
+        setMessages(prev => prev.filter(m => m._id !== tempId));
       }
     } catch (err) {
       console.error('Failed to send message via HTTP:', err);
+      // Remove optimistic message
+      setMessages(prev => prev.filter(m => m._id !== tempId));
       if (socket) {
         socket.emit('send-msg', {
           roomId: room._id,

@@ -44,6 +44,7 @@ export default function AgentPage() {
   const [clientTyping, setClientTyping] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const pollMessagesNow = useRef<(() => void) | null>(null);
 
   // Specialty canned templates
   const medicalTemplates = [
@@ -126,14 +127,16 @@ export default function AgentPage() {
           .catch(console.error);
       };
 
+      pollMessagesNow.current = pollMessages;
       pollMessages();
-      interval = setInterval(pollMessages, 3000);
+      interval = setInterval(pollMessages, 1500);
 
       if (socket) {
         socket.emit('join-room', { roomId: activeRoom._id });
       }
     } else {
       setMessages([]);
+      pollMessagesNow.current = null;
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -236,6 +239,19 @@ export default function AgentPage() {
     if (!customText) setMsgInput('');
     handleTyping(false);
 
+    // Optimistic: show immediately before server confirms
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg: Message = {
+      _id: tempId,
+      conversation: activeRoom._id,
+      sender: user.id,
+      senderName: user.name,
+      text: textToSend,
+      attachmentUrl: null,
+      createdAt: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
+
     try {
       const res = await fetch(`/api/chats/rooms/${activeRoom._id}/messages`, {
         method: 'POST',
@@ -249,13 +265,16 @@ export default function AgentPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessages(prev => {
-          if (prev.some(m => m._id === data._id)) return prev;
-          return [...prev, data];
-        });
+        // Replace optimistic with real server message
+        setMessages(prev => prev.map(m => m._id === tempId ? data : m));
+        // Trigger immediate re-poll so customer sees it ASAP
+        setTimeout(() => { pollMessagesNow.current?.(); }, 300);
+      } else {
+        setMessages(prev => prev.filter(m => m._id !== tempId));
       }
     } catch (err) {
       console.error('Failed to send message via HTTP:', err);
+      setMessages(prev => prev.filter(m => m._id !== tempId));
       if (socket) {
         socket.emit('send-msg', {
           roomId: activeRoom._id,
