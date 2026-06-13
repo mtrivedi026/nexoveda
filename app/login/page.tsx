@@ -43,7 +43,7 @@ export default function LoginPage() {
     const targetEmail = email.trim().toLowerCase();
     const staffEmails = ['admin@nexoveda.com', 'anil@nexoveda.com', 'anamika@nexoveda.com'];
     if (staffEmails.includes(targetEmail)) {
-      setError('Staff logins are restricted on this customer portal. Please use the secure Staff Portal.');
+      setError('Invalid email or password.');
       setLoading(false);
       return;
     }
