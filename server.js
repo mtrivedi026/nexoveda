@@ -62,6 +62,16 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
+  // Global DB connection middleware to ensure database status (isMock) is resolved before queries
+  app.use(async (req, res, next) => {
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error('Database connection middleware error:', err.message || err);
+    }
+    next();
+  });
+
   // Socket.io user socket mapping
   const userSockets = {};
 
