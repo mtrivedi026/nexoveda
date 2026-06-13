@@ -39,6 +39,23 @@ export default function ChatWidget() {
   const [gender, setGender] = useState('male');
   const [prefGender, setPrefGender] = useState<'male' | 'female' | 'any'>('any');
 
+  // Tab controls before chat is matching/active
+  const [lobbyTab, setLobbyTab] = useState<'consult' | 'quiz'>('consult');
+
+  // Dynamic specialists list for dropdown and timing banners
+  const [widgetSpecs, setWidgetSpecs] = useState<any[]>([]);
+  const [selectedSpec, setSelectedSpec] = useState('');
+
+  // Scored Quiz chatbot states
+  const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(-1); // -1: Intro, >=0: Active Question, -2: Results, -3: Q&A Mode
+  const [quizScore, setQuizScore] = useState(0);
+
+  // Q&A chatbot states
+  const [qaInput, setQaInput] = useState('');
+  const [qaLoading, setQaLoading] = useState(false);
+  const [qaHistory, setQaHistory] = useState<Array<{ sender: 'user' | 'bot', text: string, source?: string }>>([]);
+
   // Room states
   const [room, setRoom] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -88,6 +105,29 @@ export default function ChatWidget() {
   const subtotal = productPrice;
   const loyaltyPointsValue = user ? (user.loyaltyPoints || 0) * 0.10 : 0;
   const finalTotal = Math.max(0, Number((productPrice - discountValue - redeemedPoints * 0.10 + shippingCost).toFixed(2)));
+
+  // Mount effect to load specialists and quiz questions
+  useEffect(() => {
+    fetch('/api/specialists')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const activeSpecs = data.filter(s => s.active !== false);
+          setWidgetSpecs(activeSpecs);
+          if (activeSpecs.length > 0) setSelectedSpec(activeSpecs[0].name);
+        }
+      })
+      .catch(console.error);
+
+    fetch('/api/quiz/questions')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setQuizQuestions(data.filter(q => q.active !== false));
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     let interval: any;
@@ -214,11 +254,21 @@ export default function ChatWidget() {
   const handleStartChat = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    if (!age || Number(age) < 12 || Number(age) > 120) {
-      setErrorMessage('Please enter a valid age (12-120).');
+    if (!age || Number(age) < 18) {
+      setErrorMessage('Consultation is restricted to individuals aged 18 or older.');
+      return;
+    }
+    if (Number(age) > 120) {
+      setErrorMessage('Please enter a valid age (18-120).');
       return;
     }
     setInitiating(true);
+
+    // Map chosen specialist description to backend preferredSpecialty
+    let specialty = 'herbal';
+    if (selectedSpec.toLowerCase().includes('doctor') || selectedSpec.toLowerCase().includes('medical')) {
+      specialty = 'medical';
+    }
 
     try {
       const res = await fetch('/api/chats/initiate', {
@@ -227,7 +277,7 @@ export default function ChatWidget() {
         body: JSON.stringify({
           customerAge: Number(age),
           customerGender: gender,
-          preferredSpecialty: 'herbal',
+          preferredSpecialty: specialty,
           preferredGender: prefGender
         })
       });
@@ -296,6 +346,28 @@ export default function ChatWidget() {
           attachmentUrl: null
         });
       }
+    }
+  };
+
+  const handleSendQa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!qaInput.trim()) return;
+    const userText = qaInput;
+    setQaInput('');
+    setQaHistory(prev => [...prev, { sender: 'user', text: userText }]);
+    setQaLoading(true);
+    try {
+      const res = await fetch('/api/quiz/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: userText })
+      });
+      const data = await res.json();
+      setQaHistory(prev => [...prev, { sender: 'bot', text: data.answer, source: data.source }]);
+    } catch (err) {
+      setQaHistory(prev => [...prev, { sender: 'bot', text: 'Sorry, I am unable to fetch search results at the moment.' }]);
+    } finally {
+      setQaLoading(false);
     }
   };
 
@@ -546,16 +618,50 @@ export default function ChatWidget() {
         {activeTab === 'chat' && (
           <div className="flex-grow flex flex-col justify-between p-4">
             
-            {/* Lobby View */}
+            {/* Lobby & Quiz Switcher tabs (only when no active session exists) */}
             {!room && (
-              <div className="space-y-4 py-2">
-                <div className="text-center space-y-1.5 mb-6">
-                  <span className="text-3xl block">💬</span>
-                  <h4 className="text-base font-black text-slate-800">Start Consultation</h4>
-                  <p className="text-[11px] text-slate-500 leading-normal">
-                    Connect instantly with certified wellness specialists to discuss your stamina, fatigue, or recovery symptoms.
+              <div className="bg-slate-100 border-b border-slate-200 -mx-4 -mt-4 px-4 py-2 flex gap-2 text-[10px] font-bold text-slate-600 mb-4">
+                <button
+                  onClick={() => setLobbyTab('consult')}
+                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                    lobbyTab === 'consult' ? 'bg-emerald-800 text-white shadow-sm' : 'hover:bg-slate-200'
+                  }`}
+                >
+                  💬 Free Online Consultation
+                </button>
+                <button
+                  onClick={() => setLobbyTab('quiz')}
+                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                    lobbyTab === 'quiz' ? 'bg-emerald-800 text-white shadow-sm' : 'hover:bg-slate-200'
+                  }`}
+                >
+                  📝 AI Dosage & Quiz
+                </button>
+              </div>
+            )}
+
+            {/* Lobby View (Consultation Form) */}
+            {!room && lobbyTab === 'consult' && (
+              <div className="space-y-4 py-2 flex-grow overflow-y-auto">
+                <div className="text-center space-y-1.5 mb-4">
+                  <span className="text-3xl block">🩺</span>
+                  <h4 className="text-base font-black text-slate-800">Free Online Consultation</h4>
+                  <p className="text-[10px] text-slate-500 leading-normal px-2">
+                    Explore your relationship health, intimate wellness, and / or mental wellbeing privately with experienced counsellors dedicated to your personal growth.
                   </p>
                 </div>
+
+                {/* Availability Timings above form */}
+                {widgetSpecs.length > 0 && (
+                  <div className="bg-emerald-50 border border-emerald-900/10 p-3 rounded-2xl text-[9px] text-emerald-800 leading-relaxed">
+                    <p className="font-extrabold flex items-center gap-1 mb-1">🟢 Consultant Availability timings:</p>
+                    <ul className="space-y-0.5 font-medium list-disc pl-3">
+                      {widgetSpecs.map((spec, i) => (
+                        <li key={i}>{spec.name} ({spec.timing})</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {errorMessage && (
                   <div className="bg-red-50 border border-red-200 text-red-800 px-3 py-2.5 rounded-xl text-xs font-semibold">
@@ -573,7 +679,7 @@ export default function ChatWidget() {
                       required
                       value={age}
                       onChange={(e) => setAge(e.target.value)}
-                      placeholder="e.g. 24"
+                      placeholder="e.g. 24 (Must be 18+)"
                       className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:border-emerald-600 focus:outline-none text-slate-800 font-medium"
                     />
                   </div>
@@ -593,6 +699,23 @@ export default function ChatWidget() {
                     </select>
                   </div>
 
+                  {widgetSpecs.length > 0 && (
+                    <div>
+                      <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        Choose Specialist Type *
+                      </label>
+                      <select
+                        value={selectedSpec}
+                        onChange={(e) => setSelectedSpec(e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none text-slate-800 font-medium"
+                      >
+                        {widgetSpecs.map((spec, i) => (
+                          <option key={i} value={spec.name}>{spec.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                       Advisor Gender Preference *
@@ -603,7 +726,7 @@ export default function ChatWidget() {
                           key={g}
                           type="button"
                           onClick={() => setPrefGender(g)}
-                          className={`py-2 rounded-xl text-xs font-bold capitalize transition-all border ${
+                          className={`py-2 rounded-xl text-[10px] font-bold capitalize transition-all border cursor-pointer ${
                             prefGender === g
                               ? 'bg-yellow-500 text-black border-yellow-500 shadow-sm'
                               : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
@@ -623,6 +746,185 @@ export default function ChatWidget() {
                     {initiating ? 'Matching...' : 'Initiate Secure Consultation 🔒'}
                   </button>
                 </form>
+              </div>
+            )}
+
+            {/* AI Scored Quiz Chatbot Panel */}
+            {!room && lobbyTab === 'quiz' && (
+              <div className="space-y-4 py-2 flex-grow flex flex-col justify-between text-slate-800">
+                
+                {/* Intro Screen */}
+                {currentQuestionIdx === -1 && (
+                  <div className="space-y-6 text-center py-6 flex-grow flex flex-col justify-center">
+                    <span className="text-4xl block">📝</span>
+                    <h4 className="text-sm font-black text-slate-800">AI Health Assessment & Dosage</h4>
+                    <p className="text-[10px] text-slate-500 leading-relaxed max-w-xs mx-auto px-4">
+                      Complete our dynamic scored health assessment to calculate the recommended dosage of Adivance Capsule, or ask any health queries instantly.
+                    </p>
+                    <div className="space-y-3 pt-2 px-2">
+                      {quizQuestions.length > 0 ? (
+                        <button
+                          onClick={() => { setCurrentQuestionIdx(0); setQuizScore(0); }}
+                          className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl transition-all cursor-pointer shadow-md text-xs"
+                        >
+                          Start Health Assessment Quiz ➔
+                        </button>
+                      ) : (
+                        <p className="text-[10px] text-gray-400">Loading quiz questions...</p>
+                      )}
+                      <button
+                        onClick={() => { setCurrentQuestionIdx(-3); setQaHistory([{ sender: 'bot', text: 'Hello! I am your AI Health Assistant. Ask me anything about Ashwagandha, Shilajit, dosage, side effects, or shipping policies, and I will search Google for the answers!' }]); }}
+                        className="w-full bg-slate-100 hover:bg-slate-200 text-slate-750 border border-slate-200 font-extrabold py-3 rounded-xl transition-all cursor-pointer text-xs"
+                      >
+                        Ask a Health Question 🔍
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Active Question Screen */}
+                {currentQuestionIdx >= 0 && currentQuestionIdx < quizQuestions.length && (
+                  <div className="space-y-6 flex-grow flex flex-col justify-between py-4 px-2">
+                    <div className="space-y-4 text-center">
+                      <span className="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-200">
+                        Question {currentQuestionIdx + 1} of {quizQuestions.length}
+                      </span>
+                      <h4 className="text-xs font-black text-slate-800 leading-snug px-3 mt-3">
+                        {quizQuestions[currentQuestionIdx].text}
+                      </h4>
+                    </div>
+
+                    <div className="space-y-3">
+                      {quizQuestions[currentQuestionIdx].options.map((opt: any, i: number) => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            setQuizScore(prev => prev + opt.score);
+                            if (currentQuestionIdx + 1 < quizQuestions.length) {
+                              setCurrentQuestionIdx(prev => prev + 1);
+                            } else {
+                              setCurrentQuestionIdx(-2); // Go to results
+                            }
+                          }}
+                          className="w-full text-left bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50/25 p-3 rounded-xl font-bold transition-all text-xs cursor-pointer shadow-sm flex items-center justify-between"
+                        >
+                          <span>{opt.text}</span>
+                          <span className="text-[10px] text-gray-400 font-bold">➔</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentQuestionIdx(-1)}
+                      className="text-center text-slate-500 hover:underline cursor-pointer font-bold text-xs"
+                    >
+                      Back to Start
+                    </button>
+                  </div>
+                )}
+
+                {/* Results Screen */}
+                {currentQuestionIdx === -2 && (
+                  <div className="space-y-6 flex-grow flex flex-col justify-center py-4 text-center px-2">
+                    <span className="text-4xl block">📊</span>
+                    <h4 className="text-sm font-black text-slate-800">Assessment Complete</h4>
+                    <p className="text-[10px] text-slate-500">Your Health Assessment Score: <strong className="text-emerald-700">{quizScore}/{quizQuestions.length * 3}</strong></p>
+                    
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-2xl max-w-sm mx-auto text-slate-850 space-y-2">
+                      <h5 className="font-extrabold text-[10px] text-yellow-600 uppercase tracking-wider">Recommended Dosage:</h5>
+                      <p className="font-bold text-xs leading-normal">
+                        {quizScore <= 4 && "Mild fatigue. Recommended dosage: 1 Adivance Capsule daily after dinner with a glass of warm water or milk."}
+                        {quizScore > 4 && quizScore <= 7 && "Moderate fatigue. Recommended dosage: 1 Adivance Capsule after breakfast and 1 capsule after dinner."}
+                        {quizScore >= 8 && "Severe fatigue/exhaustion. Recommended dosage: 2 Adivance Capsules daily after dinner, and we highly recommend matching with a live Ayurvedic doctor."}
+                      </p>
+                    </div>
+
+                    <div className="space-y-3 pt-2 max-w-xs mx-auto w-full">
+                      {quizScore >= 8 && (
+                        <button
+                          onClick={() => { setLobbyTab('consult'); setCurrentQuestionIdx(-1); }}
+                          className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl transition-all cursor-pointer shadow-sm text-xs"
+                        >
+                          Book Live Consultation 🩺
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setCurrentQuestionIdx(-3)}
+                        className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 rounded-xl transition-all cursor-pointer text-xs border border-slate-200"
+                      >
+                        Ask Health Question 🔍
+                      </button>
+                      <button
+                        onClick={() => setCurrentQuestionIdx(-1)}
+                        className="text-xs text-slate-500 hover:underline cursor-pointer block w-full font-bold"
+                      >
+                        Retake Assessment 🔄
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Q&A Chat Mode */}
+                {currentQuestionIdx === -3 && (
+                  <div className="flex-grow flex flex-col justify-between h-[450px]">
+                    <div className="flex justify-between items-center bg-white border border-slate-200/60 p-2.5 rounded-xl mb-3 shadow-sm text-[9px] text-gray-500 font-medium">
+                      <span>🤖 AI Assistant (Powered by Google Search)</span>
+                      <button
+                        onClick={() => setCurrentQuestionIdx(-1)}
+                        className="text-emerald-700 hover:underline font-extrabold cursor-pointer"
+                      >
+                        Assessment Menu
+                      </button>
+                    </div>
+
+                    {/* Q&A Messages List */}
+                    <div className="flex-grow overflow-y-auto space-y-3 p-3 bg-white border border-slate-200/50 rounded-2xl max-h-[250px]">
+                      {qaHistory.map((msg, i) => {
+                        const isMe = msg.sender === 'user';
+                        return (
+                          <div key={i} className={`flex flex-col max-w-[85%] ${isMe ? 'ml-auto items-end' : 'mr-auto items-start'}`}>
+                            <div className={`p-2.5 rounded-2xl text-[11px] leading-relaxed shadow-sm ${
+                              isMe ? 'bg-yellow-500 text-black font-semibold' : 'bg-slate-100 text-slate-800 border border-slate-200'
+                            }`}>
+                              <p className="whitespace-pre-wrap">{msg.text}</p>
+                              {!isMe && msg.source && (
+                                <span className="block mt-1 text-[8px] font-extrabold text-emerald-700 uppercase tracking-wide">
+                                  Source: {msg.source}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {qaLoading && (
+                        <div className="flex items-center gap-1.5 text-[10px] text-gray-400 p-2">
+                          <div className="animate-bounce">🔍</div>
+                          <span>Searching Google...</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Q&A Input Box */}
+                    <form onSubmit={handleSendQa} className="flex gap-2 mt-3 pt-2.5 border-t border-slate-200">
+                      <input
+                        type="text"
+                        required
+                        value={qaInput}
+                        onChange={(e) => setQaInput(e.target.value)}
+                        placeholder="Ask: 'What is Shilajit?' or dosage..."
+                        className="flex-grow bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 text-slate-800"
+                      />
+                      <button
+                        type="submit"
+                        disabled={qaLoading}
+                        className="bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                      >
+                        Ask
+                      </button>
+                    </form>
+                  </div>
+                )}
+
               </div>
             )}
 
