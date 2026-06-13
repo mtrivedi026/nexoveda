@@ -40,8 +40,16 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
+    const targetEmail = email.trim().toLowerCase();
+    const staffEmails = ['admin@nexoveda.com', 'anil@nexoveda.com', 'anamika@nexoveda.com'];
+    if (staffEmails.includes(targetEmail)) {
+      setError('Staff logins are restricted on this customer portal. Please use the secure Staff Portal.');
+      setLoading(false);
+      return;
+    }
+
     const url = isRegister ? '/api/auth/register' : '/api/auth/login';
-    const body = isRegister ? { name, email, password } : { email, password };
+    const body = isRegister ? { name, email: targetEmail, password } : { email: targetEmail, password };
 
     try {
       const res = await fetch(url, {
