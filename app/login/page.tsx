@@ -19,9 +19,19 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (user && token) {
-      if (user.role === 'admin') window.location.href = '/admin';
-      else if (user.role === 'agent') window.location.href = '/agent';
-      else window.location.href = '/dashboard';
+      if (user.role === 'admin') {
+        window.location.href = '/admin';
+      } else if (user.role === 'agent') {
+        if (user.email === 'anil@nexoveda.com') {
+          window.location.href = '/agent/anil';
+        } else if (user.email === 'anamika@nexoveda.com') {
+          window.location.href = '/agent/anamika';
+        } else {
+          window.location.href = '/agent';
+        }
+      } else {
+        window.location.href = '/dashboard';
+      }
     }
   }, [user, token]);
 
@@ -156,6 +166,14 @@ export default function LoginPage() {
                 ? 'Already have an account? Sign In' 
                 : "Don't have an account yet? Create one"}
             </button>
+          </div>
+
+          <div className="text-center mt-6 pt-4 border-t border-emerald-900/10 flex justify-center gap-4 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+            <Link href="/login/admin" className="hover:text-yellow-400 transition-colors">Admin Portal</Link>
+            <span>•</span>
+            <Link href="/login/anil" className="hover:text-yellow-400 transition-colors">Dr. Anil Login</Link>
+            <span>•</span>
+            <Link href="/login/anamika" className="hover:text-yellow-400 transition-colors">Dr. Anamika Login</Link>
           </div>
 
 

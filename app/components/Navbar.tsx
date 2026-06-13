@@ -81,7 +81,7 @@ export default function Navbar() {
 
                 {user.role === 'agent' && (
                   <Link 
-                    href="/agent" 
+                    href={user.email === 'anil@nexoveda.com' ? '/agent/anil' : (user.email === 'anamika@nexoveda.com' ? '/agent/anamika' : '/agent')} 
                     className="bg-emerald-950/60 border border-emerald-800/80 hover:border-yellow-400 hover:bg-emerald-900/40 text-yellow-400 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
                   >
                     Desk
