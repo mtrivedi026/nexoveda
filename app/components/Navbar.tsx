@@ -70,23 +70,6 @@ export default function Navbar() {
                   </p>
                 </div>
 
-                {user.role === 'admin' && (
-                  <Link 
-                    href="/admin" 
-                    className="bg-emerald-950/60 border border-emerald-800/80 hover:border-yellow-400 hover:bg-emerald-900/40 text-yellow-400 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
-                  >
-                    Admin
-                  </Link>
-                )}
-
-                {user.role === 'agent' && (
-                  <Link 
-                    href={user.email === 'anil@nexoveda.com' ? '/agent/anil' : (user.email === 'anamika@nexoveda.com' ? '/agent/anamika' : '/agent')} 
-                    className="bg-emerald-950/60 border border-emerald-800/80 hover:border-yellow-400 hover:bg-emerald-900/40 text-yellow-400 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
-                  >
-                    Desk
-                  </Link>
-                )}
 
                 <button
                   onClick={handleLogout}
