@@ -441,6 +441,14 @@ async function startServer() {
         status: selectedAgent ? 'active' : 'pending'
       });
 
+      // Trigger email and whatsapp alerts asynchronously
+      try {
+        const { sendConsultationNotification } = require('./lib/notification');
+        sendConsultationNotification(newConv).catch(console.error);
+      } catch (notifErr) {
+        console.error('Failed to trigger consultation alert notification:', notifErr);
+      }
+
       if (selectedAgent) {
         // Notify matched agent socket
         const agentSocketId = userSockets[selectedAgent._id];

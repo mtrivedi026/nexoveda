@@ -47,6 +47,14 @@ export async function POST(request: Request) {
       status: selectedAgent ? 'active' : 'pending'
     });
 
+    // Trigger email and whatsapp alerts asynchronously
+    try {
+      const { sendConsultationNotification } = require('@/lib/notification');
+      sendConsultationNotification(newConv).catch(console.error);
+    } catch (notifErr) {
+      console.error('Failed to trigger consultation alert notification:', notifErr);
+    }
+
     return NextResponse.json(newConv, { status: 201 });
   } catch (err: any) {
     return NextResponse.json(
