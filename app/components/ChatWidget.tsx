@@ -746,7 +746,7 @@ export default function ChatWidget() {
                 <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-2.5 flex items-center justify-between my-2 shadow-sm">
                   <div className="text-[10px] text-slate-700">
                     <p className="font-extrabold text-black">Adivance Vitality Capsule</p>
-                    <p className="mt-0.5">$29.99 (60 caps) • Purity verified</p>
+                    <p className="mt-0.5">$29.99 (30 caps) • Purity verified</p>
                   </div>
                   <button
                     onClick={() => setActiveTab('checkout')}

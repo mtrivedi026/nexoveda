@@ -225,7 +225,7 @@ export default function Home() {
                 className="w-[340px] md:w-[420px] h-auto object-contain rounded-3xl shadow-[0_15px_50px_rgba(0,0,0,0.6)] border border-emerald-800/20 bg-[#040e0a]"
               />
               <div className="absolute bottom-5 right-5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black px-4.5 py-2 rounded-2xl text-xs font-black tracking-widest shadow-md">
-                📦 60 CAPSULES BOTTLE
+                📦 30 CAPSULES BOTTLE
               </div>
             </div>
           </div>
