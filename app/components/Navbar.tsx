@@ -47,6 +47,39 @@ export default function Navbar() {
               Talk to Health Consultant
             </button>
             <Link href="/dashboard" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">My Dashboard</Link>
+            
+            {/* Self Assessment Dropdown */}
+            <div className="relative group">
+              <button className="flex items-center gap-1 hover:text-yellow-400 transition-colors bg-transparent border-none cursor-pointer text-xs font-black uppercase tracking-wider text-emerald-100/75 relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">
+                Self Assessment <span className="text-[10px]">▼</span>
+              </button>
+              <div className="absolute left-0 mt-2 w-56 bg-emerald-950 border border-emerald-800 rounded-xl shadow-2xl py-2 hidden group-hover:block hover:block z-50 transition-all duration-200">
+                <a 
+                  href="https://forms.gle/kZmivGCmd3uuRwjM7" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors"
+                >
+                  Male Assessment Form 1
+                </a>
+                <a 
+                  href="https://forms.gle/GJNfVwA6ifcZXHMHA" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors border-t border-emerald-900/50"
+                >
+                  Male Assessment Form 2
+                </a>
+                <a 
+                  href="https://forms.gle/ytpTbaaPY7ecchVBA" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors border-t border-emerald-900/50"
+                >
+                  Female Assessment Form
+                </a>
+              </div>
+            </div>
           </div>
 
           {/* Action Area */}
