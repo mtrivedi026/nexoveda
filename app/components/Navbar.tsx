@@ -50,7 +50,9 @@ export default function Navbar() {
             >
               Talk to Health Consultant
             </button>
-            <Link href="/dashboard" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">My Dashboard</Link>
+            <Link href={user?.role === 'admin' ? '/admin' : user?.role === 'agent' ? '/staff' : '/dashboard'} className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">
+              {user?.role === 'admin' ? 'Admin Portal' : user?.role === 'agent' ? 'Staff Portal' : 'My Dashboard'}
+            </Link>
             
             {/* Self Assessment Dropdown */}
             <div className="relative">
@@ -118,8 +120,14 @@ export default function Navbar() {
                   <p className="text-[9px] text-gray-500 font-extrabold uppercase tracking-widest">Logged In</p>
                   <p className="text-xs font-black text-emerald-300 mt-0.5">
                     {user.name.split(' ')[0]} 
-                    {user.loyaltyPoints !== undefined && (
-                      <span className="text-yellow-400 ml-1.5">({(user.loyaltyPoints || 0).toFixed(0)} pts)</span>
+                    {user.role === 'customer' ? (
+                      user.loyaltyPoints !== undefined && (
+                        <span className="text-yellow-400 ml-1.5">({(user.loyaltyPoints || 0).toFixed(0)} pts)</span>
+                      )
+                    ) : (
+                      <span className="text-yellow-400 ml-1.5 uppercase text-[9px] border border-yellow-400/40 px-1 py-0.5 rounded ml-2">
+                        {user.role}
+                      </span>
                     )}
                   </p>
                 </div>
@@ -171,7 +179,9 @@ export default function Navbar() {
             >
               Talk to Health Consultant
             </button>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/dashboard" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">My Dashboard</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} href={user?.role === 'admin' ? '/admin' : user?.role === 'agent' ? '/staff' : '/dashboard'} className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">
+              {user?.role === 'admin' ? 'Admin Portal' : user?.role === 'agent' ? 'Staff Portal' : 'My Dashboard'}
+            </Link>
             
             {/* Mobile Self Assessment Accordion */}
             <div>
@@ -213,8 +223,10 @@ export default function Navbar() {
                   <p className="text-sm font-black text-emerald-300">{user.name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] text-gray-500 font-bold">Points</p>
-                  <p className="text-sm font-black text-yellow-400">{(user.loyaltyPoints || 0).toFixed(0)}</p>
+                  <p className="text-[10px] text-gray-500 font-bold">{user.role === 'customer' ? 'Points' : 'Role'}</p>
+                  <p className="text-sm font-black text-yellow-400 uppercase">
+                    {user.role === 'customer' ? (user.loyaltyPoints || 0).toFixed(0) : user.role}
+                  </p>
                 </div>
               </div>
             )}
