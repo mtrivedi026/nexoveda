@@ -85,6 +85,10 @@ export default function AdminPage() {
   const [newProductFile, setNewProductFile] = useState<File | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
 
+  const [pwdUserId, setPwdUserId] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [isChangingPwd, setIsChangingPwd] = useState(false);
+
   const [selectedAgentForRoom, setSelectedAgentForRoom] = useState<{ [roomId: string]: string }>({});
   const [feedbackMsg, setFeedbackMsg] = useState('');
 
@@ -235,6 +239,30 @@ export default function AdminPage() {
     setTimeout(() => setFeedbackMsg(''), 3000);
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pwdUserId || !newPassword) return;
+    setIsChangingPwd(true);
+    try {
+      const res = await fetch('/api/auth/password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId: pwdUserId, newPassword })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to change password');
+      showFeedback('Password changed successfully!');
+      setNewPassword('');
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsChangingPwd(false);
+    }
+  };
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProductName || !newProductPrice) {
@@ -379,6 +407,46 @@ export default function AdminPage() {
               ))}
             </div>
           )}
+
+          {/* Security Management */}
+          <section className="bg-emerald-950/20 border border-emerald-900/40 p-6 rounded-2xl space-y-4 mt-6">
+            <h4 className="text-sm font-bold text-emerald-400 border-b border-emerald-900/30 pb-2">Security: Change Passwords</h4>
+            <form onSubmit={handleChangePassword} className="flex flex-col sm:flex-row gap-4 items-end">
+              <div className="flex-grow w-full">
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Select User</label>
+                <select 
+                  value={pwdUserId} 
+                  onChange={e => setPwdUserId(e.target.value)}
+                  className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white"
+                  required
+                >
+                  <option value="">-- Choose User --</option>
+                  <option value={user._id}>Myself ({user.email})</option>
+                  {agents.map(ag => (
+                    <option key={ag._id} value={ag._id}>{ag.name} ({ag.email})</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-grow w-full">
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">New Password</label>
+                <input 
+                  type="text" 
+                  value={newPassword} 
+                  onChange={e => setNewPassword(e.target.value)} 
+                  placeholder="Enter new password"
+                  className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white"
+                  required
+                />
+              </div>
+              <button 
+                type="submit" 
+                disabled={isChangingPwd}
+                className="w-full sm:w-auto bg-red-900/60 hover:bg-red-800 text-white font-bold py-2 px-6 rounded-xl text-xs transition-colors disabled:opacity-50 border border-red-800"
+              >
+                {isChangingPwd ? 'Updating...' : 'Update Password'}
+              </button>
+            </form>
+          </section>
         </section>
 
         {/* Split grid: Chats queues & Shipment management */}
