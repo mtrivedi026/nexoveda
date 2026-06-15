@@ -868,7 +868,7 @@ export default function ChatWidget() {
 
               {user && user.loyaltyPoints > 0 && (
                 <div>
-                  <label className="block text-[8px] font-bold uppercase tracking-wider text-slate-500 mb-1">Loyalty Points ({user.loyaltyPoints.toFixed(2)} pts)</label>
+                  <label className="block text-[8px] font-bold uppercase tracking-wider text-slate-500 mb-1">Loyalty Points ({(user.loyaltyPoints || 0).toFixed(2)} pts)</label>
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <input
                       type="checkbox"

@@ -103,7 +103,7 @@ export default function Navbar() {
                   <p className="text-xs font-black text-emerald-300 mt-0.5">
                     {user.name.split(' ')[0]} 
                     {user.loyaltyPoints !== undefined && (
-                      <span className="text-yellow-400 ml-1.5">({user.loyaltyPoints.toFixed(0)} pts)</span>
+                      <span className="text-yellow-400 ml-1.5">({(user.loyaltyPoints || 0).toFixed(0)} pts)</span>
                     )}
                   </p>
                 </div>
