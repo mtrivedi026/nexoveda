@@ -38,7 +38,7 @@ export default function ChatWidget() {
   // Lobby form states
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('male');
-  const [specialty, setSpecialty] = useState<'herbal' | 'mental_health'>('herbal');
+  const [specialty, setSpecialty] = useState<'herbal' | 'mental_health' | ''>('');
   const [prefGender, setPrefGender] = useState<'male' | 'female'>('male');
 
   // Room states
@@ -225,6 +225,12 @@ export default function ChatWidget() {
   const handleStartChat = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+
+    if (!specialty) {
+      setErrorMessage('Please select a consultation type.');
+      return;
+    }
+    
     if (!age || Number(age) < 18 || Number(age) > 120) {
       setErrorMessage('Consultation is only available for individuals aged 18 and older.');
       return;
@@ -581,9 +587,11 @@ export default function ChatWidget() {
                     </label>
                     <select
                       value={specialty}
-                      onChange={(e) => setSpecialty(e.target.value as 'herbal' | 'mental_health')}
+                      onChange={(e) => setSpecialty(e.target.value as 'herbal' | 'mental_health' | '')}
                       className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none text-slate-800 font-medium"
+                      required
                     >
+                      <option value="" disabled>Choose Consultation Type</option>
                       <option value="herbal">Herbal Product Consultation</option>
                       <option value="mental_health">Mental Health Support</option>
                     </select>
@@ -614,6 +622,7 @@ export default function ChatWidget() {
                     >
                       <option value="male">Male</option>
                       <option value="female">Female</option>
+                      <option value="couple">Couple</option>
                     </select>
                   </div>
 
