@@ -447,7 +447,11 @@ export default function SmitaAgentPage() {
                       <div className="text-[10px] space-y-0.5">
                         <p>Customer Profile: {room.customerAge}y, {room.customerGender}</p>
                         <p>Comfort Specialty: {room.preferredSpecialty} ({room.preferredGender})</p>
-                        {room.referenceNumber && <p className="font-mono mt-1 text-[9px] opacity-75">Ref: {room.referenceNumber}</p>}
+                        {room.referenceNumber && (
+                          <p className="font-mono mt-1.5 text-[9px] font-bold bg-amber-50 border border-amber-200 text-amber-700 px-2 py-0.5 rounded-lg inline-block tracking-wider">
+                            🔖 {room.referenceNumber}
+                          </p>
+                        )}
                       </div>
 
                       {/* Claim action */}
@@ -480,7 +484,11 @@ export default function SmitaAgentPage() {
                     <h3 className="font-bold text-slate-800 text-sm">Consultation Workspace</h3>
                     <p className="text-[10px] text-slate-500 mt-0.5">
                       Age: {activeRoom.customerAge} | Gender: <span className="capitalize">{activeRoom.customerGender}</span>
-                      {activeRoom.referenceNumber && <span className="font-mono ml-2 border-l border-slate-300 pl-2">Ref: {activeRoom.referenceNumber}</span>}
+                      {activeRoom.referenceNumber && (
+                        <span className="font-mono ml-2 bg-amber-100 border border-amber-300 text-amber-800 text-[9px] font-bold px-2 py-0.5 rounded-lg tracking-wider">
+                          🔖 {activeRoom.referenceNumber}
+                        </span>
+                      )}
                     </p>
                   </div>
                   <button

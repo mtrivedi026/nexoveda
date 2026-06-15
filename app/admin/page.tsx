@@ -35,10 +35,11 @@ interface Conversation {
   customerAge: number;
   customerGender: string;
   agent: any | null;
-  preferredSpecialty: 'herbal' | 'medical';
+  preferredSpecialty: 'herbal' | 'medical' | 'mental_health';
   preferredGender: 'male' | 'female' | 'any';
   status: 'pending' | 'active' | 'closed';
   lastMessageAt: string;
+  referenceNumber?: string;
 }
 
 interface Agent {
@@ -46,7 +47,7 @@ interface Agent {
   name: string;
   email: string;
   role: string;
-  specialty: 'herbal' | 'medical';
+  specialty: 'herbal' | 'medical' | 'mental_health';
   gender: 'male' | 'female';
   status: 'online' | 'offline' | 'busy';
   avatarUrl?: string;
@@ -303,6 +304,11 @@ export default function AdminPage() {
                         <p className="text-[10px] text-gray-400 mt-0.5">
                           Age: {room.customerAge} | Gender: <span className="capitalize">{room.customerGender}</span>
                         </p>
+                        {room.referenceNumber && (
+                          <p className="text-[10px] font-mono mt-1 text-yellow-300 font-bold tracking-wider">
+                            🔖 Ref: {room.referenceNumber}
+                          </p>
+                        )}
                       </div>
                       
                       <span className={`text-[9px] font-bold px-2.5 py-0.5 rounded-xl uppercase border ${
@@ -315,7 +321,7 @@ export default function AdminPage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-[10px] text-gray-300 bg-[#050e0a]/40 p-3 rounded-xl">
-                      <p><span className="text-emerald-400 font-medium">Req Specialty:</span> <span className="capitalize">{room.preferredSpecialty}</span></p>
+                      <p><span className="text-emerald-400 font-medium">Req Specialty:</span> <span className="capitalize">{room.preferredSpecialty.replace('_', ' ')}</span></p>
                       <p><span className="text-emerald-400 font-medium">Req Gender:</span> <span className="capitalize">{room.preferredGender}</span></p>
                       <p className="col-span-2 mt-1 pt-1 border-t border-emerald-900/10">
                         <span className="text-emerald-400 font-medium">Matched Advisor:</span>{' '}
@@ -338,7 +344,7 @@ export default function AdminPage() {
                           <option value="">-- Choose Agent to Assign --</option>
                           {agents.map((ag) => (
                             <option key={ag._id} value={ag._id}>
-                              {ag.name} ({ag.specialty === 'herbal' ? 'Herbal' : 'Medical'} - {ag.status})
+                              {ag.name} ({ag.specialty === 'herbal' ? 'Herbal' : ag.specialty === 'mental_health' ? 'Mental Health' : 'Medical'} - {ag.status})
                             </option>
                           ))}
                         </select>
