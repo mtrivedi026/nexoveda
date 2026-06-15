@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Name and price are required' }, { status: 400 });
     }
 
-    const newProduct = new Product({
+    const productData = {
       _id: _id || `prod-${Date.now()}`,
       name,
       price: Number(price),
@@ -42,10 +42,19 @@ export async function POST(request: Request) {
       category: category || 'General',
       image: image || '/image/adivance-capsule.jpeg',
       ingredients: ingredients || []
-    });
+    };
 
-    await newProduct.save();
-    return NextResponse.json(newProduct, { status: 201 });
+    let savedProduct;
+    if (Product.create && typeof Product.create === 'function' && !Product.prototype?.save) {
+      // Mock DB
+      savedProduct = await Product.create(productData);
+    } else {
+      // Mongoose DB
+      const newProduct = new Product(productData);
+      savedProduct = await newProduct.save();
+    }
+
+    return NextResponse.json(savedProduct, { status: 201 });
   } catch (err: any) {
     return NextResponse.json(
       { message: 'Failed to create product.', error: err.message },
