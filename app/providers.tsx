@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 // --- AUTH CONTEXT ---
 interface User {
@@ -305,35 +306,43 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     }
   }, [socket, user, isConnected]);
 
+  const initialOptions = {
+    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test",
+    currency: "USD",
+    intent: "capture",
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, refreshUser, loading }}>
-      <CartContext.Provider
-        value={{
-          cart,
-          addToCart,
-          removeFromCart,
-          updateQuantity,
-          clearCart,
-          subtotal,
-          discount,
-          promoCode,
-          discountPercent,
-          shippingCost,
-          shippingType,
-          setShippingType,
-          redeemedPoints,
-          setRedeemedPoints,
-          total,
-          applyPromo,
-          removePromo
-        }}
-      >
-        <SocketContext.Provider value={{ socket, isConnected }}>
-          <ChatContext.Provider value={{ isChatOpen, setChatOpen, chatTab, setChatTab }}>
-            {children}
-          </ChatContext.Provider>
-        </SocketContext.Provider>
-      </CartContext.Provider>
-    </AuthContext.Provider>
+    <PayPalScriptProvider options={initialOptions}>
+      <AuthContext.Provider value={{ user, token, login, logout, refreshUser, loading }}>
+        <CartContext.Provider
+          value={{
+            cart,
+            addToCart,
+            removeFromCart,
+            updateQuantity,
+            clearCart,
+            subtotal,
+            discount,
+            promoCode,
+            discountPercent,
+            shippingCost,
+            shippingType,
+            setShippingType,
+            redeemedPoints,
+            setRedeemedPoints,
+            total,
+            applyPromo,
+            removePromo
+          }}
+        >
+          <SocketContext.Provider value={{ socket, isConnected }}>
+            <ChatContext.Provider value={{ isChatOpen, setChatOpen, chatTab, setChatTab }}>
+              {children}
+            </ChatContext.Provider>
+          </SocketContext.Provider>
+        </CartContext.Provider>
+      </AuthContext.Provider>
+    </PayPalScriptProvider>
   );
 }

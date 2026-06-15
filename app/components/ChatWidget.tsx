@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSocket, useAuth, useChat } from '../providers';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 
 interface Message {
   _id: string;
@@ -416,16 +417,11 @@ export default function ChatWidget() {
     }
   };
 
-  const handlePlaceOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePlaceOrder = async (paypalDetails: any = null) => {
     setCheckoutError('');
     if (!checkoutName || !checkoutEmail || !checkoutPhone || !checkoutAddress || !checkoutCity) {
       setCheckoutError('Please fill in all shipping details.');
-      return;
-    }
-    if (!cardNumber || !cardExpiry || !cardCvv) {
-      setCheckoutError('Please fill in valid card payment details.');
-      return;
+      return false;
     }
     setSubmittingOrder(true);
 
@@ -450,7 +446,9 @@ export default function ChatWidget() {
         shippingCost: shippingCost,
         total: finalTotal,
         redeemedPoints: redeemedPoints,
-        customerId: user ? user.id : null
+        customerId: user ? user.id : null,
+        paymentMethod: paypalDetails ? 'paypal' : 'cc',
+        paymentDetails: paypalDetails
       };
 
       const res = await fetch('/api/orders', {
@@ -475,9 +473,9 @@ export default function ChatWidget() {
       setCheckoutPhone('');
       setCheckoutAddress('');
       setCheckoutCity('');
+      setCheckoutCity('');
       setCheckoutState('');
       setCheckoutPostcode('');
-      setCardNumber('');
       setCardExpiry('');
       setCardCvv('');
       setAppliedPromo('');
@@ -803,7 +801,7 @@ export default function ChatWidget() {
 
         {/* TAB 2: Checkout / Payment form */}
         {activeTab === 'checkout' && (
-          <form onSubmit={handlePlaceOrder} className="p-4 space-y-4 text-xs">
+          <form onSubmit={(e) => e.preventDefault()} className="flex-grow flex flex-col overflow-hidden bg-slate-50">
             <div className="flex justify-between items-center border-b border-slate-200 pb-2">
               <h4 className="font-bold text-slate-800">Direct In-App Checkout</h4>
               <button
@@ -968,54 +966,51 @@ export default function ChatWidget() {
               </div>
             </div>
 
-            {/* Credit Card Payment */}
+            {/* Payment Method: PayPal */}
             <div className="space-y-2.5">
-              <span className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1">Credit Card Details (Payment)</span>
+              <span className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1">Payment via PayPal</span>
               
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
-                  <input
-                    type="text"
-                    required
-                    placeholder="Card Number *"
-                    maxLength={19}
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim())}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    required
-                    placeholder="MM/YY *"
-                    maxLength={5}
-                    value={cardExpiry}
-                    onChange={(e) => setCardExpiry(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none"
-                  />
-                </div>
-                <div className="col-span-3">
-                  <input
-                    type="password"
-                    required
-                    placeholder="CVV / CVC *"
-                    maxLength={4}
-                    value={cardCvv}
-                    onChange={(e) => setCardCvv(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none"
-                  />
-                </div>
+              <div className="mt-2">
+                {submittingOrder && <p className="text-emerald-600 font-bold text-center mb-2 text-[10px]">Processing...</p>}
+                <PayPalButtons
+                  style={{ layout: "vertical", color: "gold", shape: "rect", label: "pay" }}
+                  onClick={(data, actions) => {
+                    setCheckoutError('');
+                    if (!checkoutName || !checkoutEmail || !checkoutPhone || !checkoutAddress || !checkoutCity) {
+                      setCheckoutError('Please fill in all shipping details before paying.');
+                      return actions.reject();
+                    }
+                    return actions.resolve();
+                  }}
+                  createOrder={(data, actions) => {
+                    return actions.order.create({
+                      intent: "CAPTURE",
+                      purchase_units: [
+                        {
+                          amount: {
+                            currency_code: "USD",
+                            value: finalTotal.toFixed(2),
+                          },
+                        },
+                      ],
+                    });
+                  }}
+                  onApprove={async (data, actions) => {
+                    if (!actions.order) return;
+                    try {
+                      const details = await actions.order.capture();
+                      await handlePlaceOrder(details);
+                    } catch (err) {
+                      setCheckoutError('Failed to capture PayPal order.');
+                    }
+                  }}
+                  onError={(err) => {
+                    setCheckoutError('PayPal encountered an error. Please try again.');
+                  }}
+                />
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={submittingOrder}
-              className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-xl transition-all shadow-md cursor-pointer disabled:opacity-50"
-            >
-              {submittingOrder ? 'Processing Payment...' : `Pay & Place Order - $${finalTotal} 💳`}
-            </button>
           </form>
         )}
 

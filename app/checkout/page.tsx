@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { useCart, useAuth } from '../providers';
 import { useRouter } from 'next/navigation';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 import Link from 'next/link';
 
 // Seed Global Regions & States for Autocomplete
@@ -86,8 +87,7 @@ export default function CheckoutPage() {
     setShowSuggestions(false);
   };
 
-  const handlePlaceOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePlaceOrder = async (paypalDetails: any = null) => {
     setValidationError('');
     
     // Clean/sanitize phone input (remove spaces, dashes, parentheses)
@@ -96,14 +96,14 @@ export default function CheckoutPage() {
     // Validations
     if (!name || !email || !cleanPhone || !addressLine1 || !cityInput || !postcode) {
       setValidationError('Please fill in all required fields.');
-      return;
+      return false;
     }
 
     // Global Phone Validation: standard E.164 pattern (+ followed by 7 to 15 digits, or just 7 to 15 digits)
     const phoneRegex = /^\+?[1-9]\d{6,14}$/;
     if (!phoneRegex.test(cleanPhone)) {
       setValidationError('Please enter a valid global phone number with country code (e.g., +15550199 or +919876543210).');
-      return;
+      return false;
     }
 
     setLoading(true);
@@ -126,7 +126,9 @@ export default function CheckoutPage() {
       shippingCost,
       total,
       redeemedPoints,
-      customerId: user ? user.id : null
+      customerId: user ? user.id : null,
+      paymentMethod: paypalDetails ? 'paypal' : 'cod',
+      paymentDetails: paypalDetails
     };
 
     try {
@@ -141,6 +143,7 @@ export default function CheckoutPage() {
       }
       setSuccessOrder(data);
       clearCart();
+      return true;
     } catch (err: any) {
       setValidationError(err.message || 'Connection error placing order.');
     } finally {
@@ -215,7 +218,7 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
             
             {/* Left: Checkout Shipping Details Form */}
-            <form onSubmit={handlePlaceOrder} className="lg:col-span-2 space-y-6">
+            <form onSubmit={(e) => e.preventDefault()} className="lg:col-span-2 space-y-6">
               
               {validationError && (
                 <div id="validation-error-box" className="bg-red-950/30 border border-red-900/50 text-red-200 px-4 py-3.5 rounded-xl text-xs flex gap-2 items-center scroll-mt-24">
@@ -358,27 +361,57 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-              {/* 3. Payment Method Simulation */}
+              {/* 3. Payment Method: PayPal */}
               <div className="bg-emerald-950/10 border border-emerald-900/30 rounded-3xl p-6">
                 <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
                   <span className="text-emerald-400">💳</span> Payment Information
                 </h3>
-                <div className="bg-[#050e0a]/80 border border-emerald-900/40 p-4 rounded-2xl flex items-center gap-3">
-                  <span className="text-xl">🤝</span>
-                  <div className="text-xs">
-                    <p className="font-bold text-emerald-300">Cash on Delivery (COD) / Mobile Bank Transfer</p>
-                    <p className="text-gray-400 mt-0.5">Pay safely in USD ($) once your package arrives at your doorstep or via bank transfer.</p>
-                  </div>
+                <div className="mt-4 bg-[#050e0a]/80 border border-emerald-900/40 p-4 rounded-2xl">
+                  {loading && <p className="text-emerald-400 font-bold text-center mb-4">Processing...</p>}
+                  <PayPalButtons
+                    style={{ layout: "vertical", color: "gold", shape: "rect", label: "pay" }}
+                    onClick={(data, actions) => {
+                      setValidationError('');
+                      let cleanPhone = phone.trim().replace(/[\s\-()]/g, '');
+                      if (!name || !email || !cleanPhone || !addressLine1 || !cityInput || !postcode) {
+                        setValidationError('Please fill in all required shipping fields before paying.');
+                        return actions.reject();
+                      }
+                      const phoneRegex = /^\+?[1-9]\d{6,14}$/;
+                      if (!phoneRegex.test(cleanPhone)) {
+                        setValidationError('Please enter a valid global phone number with country code.');
+                        return actions.reject();
+                      }
+                      return actions.resolve();
+                    }}
+                    createOrder={(data, actions) => {
+                      return actions.order.create({
+                        intent: "CAPTURE",
+                        purchase_units: [
+                          {
+                            amount: {
+                              currency_code: "USD",
+                              value: total.toFixed(2),
+                            },
+                          },
+                        ],
+                      });
+                    }}
+                    onApprove={async (data, actions) => {
+                      if (!actions.order) return;
+                      try {
+                        const details = await actions.order.capture();
+                        await handlePlaceOrder(details);
+                      } catch (err) {
+                        setValidationError('Failed to capture PayPal order.');
+                      }
+                    }}
+                    onError={(err) => {
+                      setValidationError('PayPal encountered an error. Please try again.');
+                    }}
+                  />
                 </div>
               </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold py-4 rounded-xl text-sm transition-all shadow-lg shadow-yellow-500/10 hover:shadow-yellow-400/20 active:scale-98 cursor-pointer disabled:opacity-50"
-              >
-                {loading ? 'Processing Order...' : `Place Cash on Delivery Order ($${total.toFixed(2)}) 🔒`}
-              </button>
 
             </form>
 
