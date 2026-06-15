@@ -41,7 +41,10 @@ export async function POST(request: Request) {
       description: description || '',
       category: category || 'General',
       image: image || '/image/adivance-capsule.jpeg',
-      ingredients: ingredients || []
+      ingredients: ingredients || [],
+      rating: 0,
+      reviewCount: 0,
+      discountPercent: 0
     };
 
     let savedProduct;

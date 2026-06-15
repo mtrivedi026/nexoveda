@@ -245,8 +245,8 @@ export default function ShopPage() {
                         <div>
                           <div className="flex items-center gap-1 mb-2 text-xs font-semibold text-yellow-400">
                             <span>⭐</span>
-                            <span>{product.rating.toFixed(1)}</span>
-                            <span className="text-gray-400 font-normal">({product.reviewCount} reviews)</span>
+                            <span>{(product.rating || 0).toFixed(1)}</span>
+                            <span className="text-gray-400 font-normal">({product.reviewCount || 0} reviews)</span>
                           </div>
 
                           <h3 className="text-lg font-bold text-white group-hover:text-yellow-400 transition-colors">
