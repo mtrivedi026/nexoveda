@@ -12,21 +12,7 @@
       "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
       "loyaltyPoints": 0,
       "createdAt": "2026-06-12T08:38:42.477Z",
-      "updatedAt": "2026-06-12T09:01:33.909Z"
-    },
-    {
-      "_id": "agent-anil",
-      "name": "Dr. Anil Singh (B.A.M.S.)",
-      "email": "anil@nexoveda.com",
-      "role": "agent",
-      "specialty": "herbal",
-      "gender": "male",
-      "status": "online",
-      "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
-      "loyaltyPoints": 0,
-      "createdAt": "2026-06-12T08:38:42.477Z",
-      "updatedAt": "2026-06-12T09:01:33.923Z"
+      "updatedAt": "2026-06-15T09:22:25.343Z"
     },
     {
       "_id": "admin-main",
@@ -40,7 +26,35 @@
       "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
       "loyaltyPoints": 0,
       "createdAt": "2026-06-12T08:38:42.477Z",
-      "updatedAt": "2026-06-12T09:01:33.926Z"
+      "updatedAt": "2026-06-15T09:22:25.355Z"
+    },
+    {
+      "_id": "agent-harsh",
+      "name": "Dr. Harsh Rawat (B.A.M.S.)",
+      "email": "harsh@nexoveda.com",
+      "role": "agent",
+      "specialty": "herbal",
+      "gender": "male",
+      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
+      "status": "online",
+      "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
+      "loyaltyPoints": 0,
+      "createdAt": "2026-06-15T09:11:16.997Z",
+      "updatedAt": "2026-06-15T09:22:25.348Z"
+    },
+    {
+      "_id": "agent-smita",
+      "name": "Ms. Smita Gupta (M. A. Psychology)",
+      "email": "smita@nexoveda.com",
+      "role": "agent",
+      "specialty": "mental_health",
+      "gender": "female",
+      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
+      "status": "online",
+      "avatarUrl": "https://images.unsplash.com/photo-1594744803329-e58b31de215f?w=150&auto=format&fit=crop&q=80",
+      "loyaltyPoints": 0,
+      "createdAt": "2026-06-15T09:11:17.002Z",
+      "updatedAt": "2026-06-15T09:22:25.351Z"
     }
   ],
   "conversations": [],
