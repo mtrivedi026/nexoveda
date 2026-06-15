@@ -23,7 +23,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'nexoveda_super_secret_session_key_
 
 // Initialize DB
 const db = require('./lib/db');
-const { connectDB, User, Product, Conversation, Message, Order } = db;
+const { connectDB, User, Product, Conversation, Message, Order, OtpToken } = db;
 
 async function startServer() {
   if (!isStandalone) {
@@ -91,13 +91,50 @@ async function startServer() {
 
   // --- API AUTH ROUTES ---
 
+  // Auth: Send OTP for Registration or Password Reset
+  app.post('/api/auth/send-otp', async (req, res) => {
+    try {
+      const { email, purpose } = req.body;
+      if (!email || !purpose) return res.status(400).json({ message: 'Missing email or purpose.' });
+      
+      const existingUser = await User.findOne({ email });
+      if (purpose === 'register' && existingUser) {
+        return res.status(400).json({ message: 'Email already registered.' });
+      }
+      if (purpose === 'forgot_password' && !existingUser) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      if (OtpToken.deleteMany) {
+        await OtpToken.deleteMany({ email, purpose });
+      }
+
+      await OtpToken.create({ email, otp, purpose });
+
+      const { sendOtpEmail } = require('./lib/notification');
+      await sendOtpEmail(email, otp, purpose);
+
+      res.status(200).json({ message: 'OTP sent successfully.' });
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to send OTP.', error: err.message });
+    }
+  });
+
   // Auth: Customer Register
   app.post('/api/auth/register', async (req, res) => {
     try {
-      const { name, email, password } = req.body;
-      if (!name || !email || !password) {
-        return res.status(400).json({ message: 'Please enter name, email, and password.' });
+      const { name, email, password, otp } = req.body;
+      if (!name || !email || !password || !otp) {
+        return res.status(400).json({ message: 'Please enter name, email, password, and OTP.' });
       }
+      
+      const otpRecord = await OtpToken.findOne({ email, purpose: 'register', otp });
+      if (!otpRecord) {
+        return res.status(400).json({ message: 'Invalid or expired OTP.' });
+      }
+
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({ message: 'Email already registered.' });
@@ -109,6 +146,11 @@ async function startServer() {
         password: hashedPassword,
         role: 'customer'
       });
+      
+      if (OtpToken.deleteMany) {
+        await OtpToken.deleteMany({ email, purpose: 'register' });
+      }
+
       const token = jwt.sign(
         { userId: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role },
         JWT_SECRET,
@@ -125,6 +167,36 @@ async function startServer() {
           status: 'offline'
         }
       });
+    } catch (err) {
+      res.status(500).json({ message: 'Server error', error: err.message });
+    }
+  });
+
+  // Auth: Reset Password
+  app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+      const { email, otp, newPassword } = req.body;
+      if (!email || !otp || !newPassword) {
+        return res.status(400).json({ message: 'Please provide email, OTP, and new password.' });
+      }
+      
+      const otpRecord = await OtpToken.findOne({ email, purpose: 'forgot_password', otp });
+      if (!otpRecord) {
+        return res.status(400).json({ message: 'Invalid or expired OTP.' });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      
+      let user = await User.findOne({ email });
+      if (!user) return res.status(404).json({ message: 'User not found.' });
+
+      await User.findByIdAndUpdate(user._id || user.id, { password: hashedPassword });
+
+      if (OtpToken.deleteMany) {
+        await OtpToken.deleteMany({ email, purpose: 'forgot_password' });
+      }
+
+      res.status(200).json({ message: 'Password reset successfully.' });
     } catch (err) {
       res.status(500).json({ message: 'Server error', error: err.message });
     }
