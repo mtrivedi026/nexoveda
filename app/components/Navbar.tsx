@@ -17,8 +17,9 @@ export default function Navbar() {
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const isStaff = user && (user.role === 'agent' || user.role === 'admin');
+
   const handleLogout = () => {
-    const isStaff = user && (user.role === 'agent' || user.role === 'admin');
     logout();
     if (isStaff) {
       window.location.href = '/staff';
@@ -44,74 +45,82 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-black uppercase tracking-wider text-emerald-100/75">
             <Link href="/" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Home</Link>
             <Link href="/shop" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Shop Catalog</Link>
-            <button 
-              onClick={() => { setChatTab('chat'); setChatOpen(true); }} 
-              className="hover:text-yellow-400 transition-colors bg-transparent border-none cursor-pointer text-xs font-black uppercase tracking-wider text-emerald-100/75 relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300"
-            >
-              Talk to Health Consultant
-            </button>
+            
+            {!isStaff && (
+              <button 
+                onClick={() => { setChatTab('chat'); setChatOpen(true); }} 
+                className="hover:text-yellow-400 transition-colors bg-transparent border-none cursor-pointer text-xs font-black uppercase tracking-wider text-emerald-100/75 relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300"
+              >
+                Talk to Health Consultant
+              </button>
+            )}
+
             <Link href={user?.role === 'admin' ? '/admin' : user?.role === 'agent' ? '/staff' : '/dashboard'} className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">
               {user?.role === 'admin' ? 'Admin Portal' : user?.role === 'agent' ? 'Staff Portal' : 'My Dashboard'}
             </Link>
             
             {/* Self Assessment Dropdown */}
-            <div className="relative">
-              <button 
-                onClick={() => setIsDesktopAssessOpen(!isDesktopAssessOpen)}
-                className={`flex items-center gap-1 transition-colors bg-transparent border-none cursor-pointer text-xs font-black uppercase tracking-wider text-emerald-100/75 relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:bg-yellow-400 after:transition-all after:duration-300 ${isDesktopAssessOpen ? 'text-yellow-400 after:w-full' : 'hover:text-yellow-400 after:w-0 hover:after:w-full'}`}
-              >
-                Self Assessment <span className="text-[10px]">{isDesktopAssessOpen ? '▲' : '▼'}</span>
-              </button>
-              
-              {isDesktopAssessOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsDesktopAssessOpen(false)}></div>
-                  <div className="absolute left-0 mt-2 w-56 bg-emerald-950 border border-emerald-800 rounded-xl shadow-2xl py-2 z-50 transition-all duration-200">
-                    <a 
-                      href="https://forms.gle/kZmivGCmd3uuRwjM7" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      onClick={() => setIsDesktopAssessOpen(false)}
-                      className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors"
-                    >
-                      Male Assessment Form 1
-                    </a>
-                    <a 
-                      href="https://forms.gle/GJNfVwA6ifcZXHMHA" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      onClick={() => setIsDesktopAssessOpen(false)}
-                      className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors border-t border-emerald-900/50"
-                    >
-                      Male Assessment Form 2
-                    </a>
-                    <a 
-                      href="https://forms.gle/ytpTbaaPY7ecchVBA" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      onClick={() => setIsDesktopAssessOpen(false)}
-                      className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors border-t border-emerald-900/50"
-                    >
-                      Female Assessment Form
-                    </a>
-                  </div>
-                </>
-              )}
-            </div>
+            {!isStaff && (
+              <div className="relative">
+                <button 
+                  onClick={() => setIsDesktopAssessOpen(!isDesktopAssessOpen)}
+                  className={`flex items-center gap-1 transition-colors bg-transparent border-none cursor-pointer text-xs font-black uppercase tracking-wider text-emerald-100/75 relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:bg-yellow-400 after:transition-all after:duration-300 ${isDesktopAssessOpen ? 'text-yellow-400 after:w-full' : 'hover:text-yellow-400 after:w-0 hover:after:w-full'}`}
+                >
+                  Self Assessment <span className="text-[10px]">{isDesktopAssessOpen ? '▲' : '▼'}</span>
+                </button>
+                
+                {isDesktopAssessOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsDesktopAssessOpen(false)}></div>
+                    <div className="absolute left-0 mt-2 w-56 bg-emerald-950 border border-emerald-800 rounded-xl shadow-2xl py-2 z-50 transition-all duration-200">
+                      <a 
+                        href="https://forms.gle/kZmivGCmd3uuRwjM7" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        onClick={() => setIsDesktopAssessOpen(false)}
+                        className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors"
+                      >
+                        Male Assessment Form 1
+                      </a>
+                      <a 
+                        href="https://forms.gle/GJNfVwA6ifcZXHMHA" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        onClick={() => setIsDesktopAssessOpen(false)}
+                        className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors border-t border-emerald-900/50"
+                      >
+                        Male Assessment Form 2
+                      </a>
+                      <a 
+                        href="https://forms.gle/ytpTbaaPY7ecchVBA" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        onClick={() => setIsDesktopAssessOpen(false)}
+                        className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors border-t border-emerald-900/50"
+                      >
+                        Female Assessment Form
+                      </a>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Action Area */}
           <div className="flex items-center gap-3 sm:gap-5">
             
             {/* Cart Link */}
-            <Link href="/cart" className="relative p-2.5 sm:p-3 text-emerald-300 hover:text-yellow-400 transition-all bg-emerald-950/15 rounded-2xl border border-emerald-900/15 hover:border-yellow-400/40">
-              <span className="text-lg sm:text-xl">🛒</span>
-              {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-yellow-500 text-black text-[9px] sm:text-[10px] font-black rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-[#030906]">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
+            {!isStaff && (
+              <Link href="/cart" className="relative p-2.5 sm:p-3 text-emerald-300 hover:text-yellow-400 transition-all bg-emerald-950/15 rounded-2xl border border-emerald-900/15 hover:border-yellow-400/40">
+                <span className="text-lg sm:text-xl">🛒</span>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-yellow-500 text-black text-[9px] sm:text-[10px] font-black rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-[#030906]">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {/* Auth Actions */}
             {user ? (
@@ -173,22 +182,27 @@ export default function Navbar() {
           <div className="flex flex-col gap-4 text-xs font-black uppercase tracking-wider text-emerald-100/80">
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">Home</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/shop" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">Shop Catalog</Link>
-            <button 
-              onClick={() => { setIsMobileMenuOpen(false); setChatTab('chat'); setChatOpen(true); }} 
-              className="hover:text-yellow-400 text-left py-2 border-b border-emerald-900/20 bg-transparent border-none cursor-pointer uppercase font-black"
-            >
-              Talk to Health Consultant
-            </button>
+            
+            {!isStaff && (
+              <button 
+                onClick={() => { setIsMobileMenuOpen(false); setChatTab('chat'); setChatOpen(true); }} 
+                className="hover:text-yellow-400 text-left py-2 border-b border-emerald-900/20 bg-transparent border-none cursor-pointer uppercase font-black"
+              >
+                Talk to Health Consultant
+              </button>
+            )}
+
             <Link onClick={() => setIsMobileMenuOpen(false)} href={user?.role === 'admin' ? '/admin' : user?.role === 'agent' ? '/staff' : '/dashboard'} className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">
               {user?.role === 'admin' ? 'Admin Portal' : user?.role === 'agent' ? 'Staff Portal' : 'My Dashboard'}
             </Link>
             
             {/* Mobile Self Assessment Accordion */}
-            <div>
-              <button 
-                onClick={() => setIsMobileAssessOpen(!isMobileAssessOpen)}
-                className="w-full flex justify-between items-center py-2 hover:text-yellow-400 border-b border-emerald-900/20 bg-transparent border-none cursor-pointer uppercase font-black"
-              >
+            {!isStaff && (
+              <div>
+                <button 
+                  onClick={() => setIsMobileAssessOpen(!isMobileAssessOpen)}
+                  className="w-full flex justify-between items-center py-2 hover:text-yellow-400 border-b border-emerald-900/20 bg-transparent border-none cursor-pointer uppercase font-black"
+                >
                 Self Assessment <span>{isMobileAssessOpen ? '▲' : '▼'}</span>
               </button>
               {isMobileAssessOpen && (
@@ -214,6 +228,7 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+            )}
             
             {/* Mobile Logged In User Info */}
             {user && (
