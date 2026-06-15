@@ -473,7 +473,7 @@ export default function Home() {
                     required 
                     value={contactPhone} 
                     onChange={(e) => setContactPhone(e.target.value)}
-                    placeholder="e.g. +1 555-0199" 
+                    placeholder="e.g. +91 8090752798" 
                     className="w-full bg-[#030907]/90 border border-emerald-900/55 focus:border-yellow-400 rounded-xl px-4.5 py-4 text-xs outline-none text-white transition-all font-medium"
                   />
                 </div>
