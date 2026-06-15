@@ -53,6 +53,15 @@ interface Agent {
   avatarUrl?: string;
 }
 
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+}
+
 export default function AdminPage() {
   const { user, token, loading: authLoading } = useAuth();
   const { socket } = useSocket();
@@ -65,6 +74,15 @@ export default function AdminPage() {
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [loadingRooms, setLoadingRooms] = useState(true);
   const [loadingAgents, setLoadingAgents] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [newProductName, setNewProductName] = useState('');
+  const [newProductPrice, setNewProductPrice] = useState('');
+  const [newProductDesc, setNewProductDesc] = useState('');
+  const [newProductCategory, setNewProductCategory] = useState('');
+  const [newProductImage, setNewProductImage] = useState('');
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
 
   const [selectedAgentForRoom, setSelectedAgentForRoom] = useState<{ [roomId: string]: string }>({});
   const [feedbackMsg, setFeedbackMsg] = useState('');
@@ -102,6 +120,15 @@ export default function AdminPage() {
       .then((data) => {
         if (Array.isArray(data)) setAgents(data);
         setLoadingAgents(false);
+      })
+      .catch(console.error);
+
+    // Fetch products
+    fetch('/api/products')
+      .then(res => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setProducts(data);
+        setLoadingProducts(false);
       })
       .catch(console.error);
   };
@@ -205,6 +232,62 @@ export default function AdminPage() {
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);
     setTimeout(() => setFeedbackMsg(''), 3000);
+  };
+
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProductName || !newProductPrice) {
+      alert('Name and price are required.');
+      return;
+    }
+    setIsAddingProduct(true);
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: newProductName,
+          price: Number(newProductPrice),
+          description: newProductDesc,
+          category: newProductCategory,
+          image: newProductImage
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to add product');
+      setProducts(prev => [...prev, data]);
+      setNewProductName('');
+      setNewProductPrice('');
+      setNewProductDesc('');
+      setNewProductCategory('');
+      setNewProductImage('');
+      showFeedback('Product added successfully!');
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsAddingProduct(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to delete product');
+      setProducts(prev => prev.filter(p => p._id !== productId));
+      showFeedback('Product deleted successfully!');
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
   if (authLoading || !user || user.role !== 'admin') {
@@ -442,6 +525,82 @@ export default function AdminPage() {
           </section>
 
         </div>
+
+        {/* Product Management Section */}
+        <section className="space-y-6 pt-8 border-t border-emerald-900/30">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <span>🛒</span> Product Catalog Management
+          </h3>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+            
+            {/* Add New Product Form */}
+            <form onSubmit={handleAddProduct} className="bg-emerald-950/20 border border-emerald-900/40 p-6 rounded-2xl space-y-4">
+              <h4 className="text-sm font-bold text-emerald-400 border-b border-emerald-900/30 pb-2">Add New Product</h4>
+              
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Product Name *</label>
+                <input type="text" required value={newProductName} onChange={e => setNewProductName(e.target.value)} className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" />
+              </div>
+              
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Price (USD) *</label>
+                <input type="number" step="0.01" required value={newProductPrice} onChange={e => setNewProductPrice(e.target.value)} className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" />
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Category</label>
+                <input type="text" value={newProductCategory} onChange={e => setNewProductCategory(e.target.value)} placeholder="e.g. Supplements" className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" />
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Image URL</label>
+                <input type="text" value={newProductImage} onChange={e => setNewProductImage(e.target.value)} placeholder="/image/file.jpeg or https://..." className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" />
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Description</label>
+                <textarea rows={3} value={newProductDesc} onChange={e => setNewProductDesc(e.target.value)} className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white resize-none" />
+              </div>
+
+              <button type="submit" disabled={isAddingProduct} className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2.5 rounded-xl text-xs transition-colors disabled:opacity-50 mt-2 cursor-pointer">
+                {isAddingProduct ? 'Adding...' : 'Add Product'}
+              </button>
+            </form>
+
+            {/* Product List */}
+            <div className="lg:col-span-2 space-y-4">
+              {loadingProducts ? (
+                <p className="text-xs text-gray-400">Loading products...</p>
+              ) : products.length === 0 ? (
+                <div className="bg-emerald-950/5 border border-emerald-900/20 rounded-2xl p-8 text-center text-xs text-gray-400">
+                  No products in catalog.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {products.map(prod => (
+                    <div key={prod._id} className="bg-emerald-950/10 border border-emerald-900/30 p-4 rounded-2xl flex gap-4 items-center">
+                      <img src={prod.image || '/image/adivance-capsule.jpeg'} alt={prod.name} className="w-16 h-16 rounded-xl object-cover border border-emerald-800" />
+                      <div className="flex-grow">
+                        <h4 className="text-sm font-bold text-white">{prod.name}</h4>
+                        <p className="text-[10px] text-emerald-400">${prod.price.toFixed(2)} &bull; {prod.category}</p>
+                      </div>
+                      <button 
+                        onClick={() => handleDeleteProduct(prod._id)}
+                        className="bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/40 p-2 rounded-lg transition-colors cursor-pointer"
+                        title="Delete Product"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
+        </section>
+
       </main>
 
       {/* Footer */}
