@@ -421,7 +421,7 @@ export default function AdminPage() {
                   required
                 >
                   <option value="">-- Choose User --</option>
-                  <option value={user._id}>Myself ({user.email})</option>
+                  <option value={user.id}>Myself ({user.email})</option>
                   {agents.map(ag => (
                     <option key={ag._id} value={ag._id}>{ag.name} ({ag.email})</option>
                   ))}
