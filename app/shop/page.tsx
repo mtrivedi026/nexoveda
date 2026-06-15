@@ -46,16 +46,21 @@ export default function ShopPage() {
 
   // Filtered products
   const filteredProducts = products.filter((p) => {
-    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
-                          p.description.toLowerCase().includes(search.toLowerCase()) ||
-                          p.ingredients.some(i => i.toLowerCase().includes(search.toLowerCase()));
+    const pName = p.name || '';
+    const pDesc = p.description || '';
+    const pIngs = p.ingredients || [];
+    const pRating = p.rating || 0;
+    
+    const matchesSearch = pName.toLowerCase().includes(search.toLowerCase()) || 
+                          pDesc.toLowerCase().includes(search.toLowerCase()) ||
+                          pIngs.some(i => i.toLowerCase().includes(search.toLowerCase()));
     
     const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
     
     const discountedPrice = p.price * (1 - (p.discountPercent || 0) / 100);
     const matchesPrice = discountedPrice <= maxPrice;
     
-    const matchesRating = p.rating >= minRating;
+    const matchesRating = pRating >= minRating;
 
     return matchesSearch && matchesCategory && matchesPrice && matchesRating;
   });
