@@ -518,7 +518,8 @@ async function startServer() {
     try {
       const { roomId } = req.params;
       const messages = await Message.find({ conversation: roomId });
-      res.json(messages);
+      const jsonMessages = messages.map((m) => m.toJSON ? m.toJSON() : m);
+      res.json(jsonMessages);
     } catch (err) {
       res.status(500).json({ message: 'Failed to fetch messages', error: err.message });
     }
@@ -617,8 +618,9 @@ async function startServer() {
       await Conversation.findByIdAndUpdate(roomId, { lastMessageAt: new Date() });
 
       // Broadcast to any active socket connection
-      io.to(roomId).emit('recv-msg', msg);
-      io.to('admins').emit('admin-recv-msg', msg);
+      const serializedMsg = msg.toJSON ? msg.toJSON() : msg;
+      io.to(roomId).emit('recv-msg', serializedMsg);
+      io.to('admins').emit('admin-recv-msg', serializedMsg);
 
       res.status(201).json(msg);
     } catch (err) {
@@ -700,8 +702,9 @@ async function startServer() {
           attachmentUrl: attachmentUrl || null
         });
 
-        io.to(roomId).emit('recv-msg', msg);
-        io.to('admins').emit('admin-recv-msg', msg);
+        const serializedMsg = msg.toJSON ? msg.toJSON() : msg;
+        io.to(roomId).emit('recv-msg', serializedMsg);
+        io.to('admins').emit('admin-recv-msg', serializedMsg);
 
         // Simulated Agent Auto-Reply for offline/testing agents in Mock mode
         if (db.isMock && senderId === 'anonymous-customer') {

@@ -11,7 +11,8 @@ export async function GET(
     const { roomId } = await params;
     await connectDB();
     const messages = await Message.find({ conversation: roomId });
-    return NextResponse.json(messages);
+    const jsonMessages = messages.map((m: any) => m.toJSON ? m.toJSON() : m);
+    return NextResponse.json(jsonMessages);
   } catch (err: any) {
     return NextResponse.json(
       { message: 'Failed to fetch messages', error: err.message },
@@ -50,7 +51,8 @@ export async function POST(
       await Conversation.findByIdAndUpdate(roomId, { lastMessageAt: new Date() });
     }
 
-    return NextResponse.json(newMessage, { status: 201 });
+    const jsonNewMessage = newMessage.toJSON ? newMessage.toJSON() : newMessage;
+    return NextResponse.json(jsonNewMessage, { status: 201 });
   } catch (err: any) {
     return NextResponse.json(
       { message: 'Failed to send message', error: err.message },
