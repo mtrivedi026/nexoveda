@@ -417,7 +417,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest">Customer Support Phone</h4>
-                    <p className="text-white font-black text-base mt-0.5">+1 555-0199</p>
+                    <p className="text-white font-black text-base mt-0.5">+91 8090752798</p>
                   </div>
                 </div>
 
