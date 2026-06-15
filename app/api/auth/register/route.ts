@@ -10,11 +10,20 @@ export async function POST(request: Request) {
   try {
     await connectDB();
     const body = await request.json();
-    const { name, email, password } = body;
+    const { name, email, password, otp } = body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !otp) {
       return NextResponse.json(
-        { message: 'Please enter name, email, and password.' },
+        { message: 'Please enter name, email, password, and OTP.' },
+        { status: 400 }
+      );
+    }
+
+    const { OtpToken } = db as any;
+    const otpRecord = await OtpToken.findOne({ email, purpose: 'register', otp });
+    if (!otpRecord) {
+      return NextResponse.json(
+        { message: 'Invalid or expired OTP.' },
         { status: 400 }
       );
     }
@@ -40,6 +49,10 @@ export async function POST(request: Request) {
       JWT_SECRET,
       { expiresIn: '7d' }
     );
+
+    if (OtpToken && OtpToken.deleteMany) {
+      await OtpToken.deleteMany({ email, purpose: 'register' });
+    }
 
     return NextResponse.json(
       {
