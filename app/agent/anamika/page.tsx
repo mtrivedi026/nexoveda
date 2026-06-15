@@ -21,10 +21,11 @@ interface Conversation {
   customerAge: number;
   customerGender: string;
   agent: any | null;
-  preferredSpecialty: 'herbal' | 'medical';
+  preferredSpecialty: 'herbal' | 'medical' | 'mental_health';
   preferredGender: 'male' | 'female' | 'any';
   status: 'pending' | 'active' | 'closed';
   lastMessageAt: string;
+  referenceNumber?: string;
 }
 
 export default function AnamikaAgentPage() {
@@ -45,13 +46,6 @@ export default function AnamikaAgentPage() {
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const pollMessagesNow = useRef<(() => void) | null>(null);
-
-  // Dr. Anamika's templates
-  const templates = [
-    "As a Doctor, I recommend taking Ashwagandha with warm milk after meals to lower cortisol levels safely.",
-    "Please share your medical history. Are you currently taking any prescription medications?",
-    "For physical stamina, standardized Shilajit should be consumed in pea-sized amounts twice daily."
-  ];
 
   const loadData = () => {
     if (!token) return;
@@ -82,7 +76,7 @@ export default function AnamikaAgentPage() {
   useEffect(() => {
     if (!authLoading) {
       if (!user || user.role !== 'agent' || user.email !== 'anamika@nexoveda.com') {
-        window.location.href = '/login/anamika';
+        window.location.href = '/staff';
       } else {
         setStatus(user.status);
         loadData();
@@ -351,39 +345,39 @@ export default function AnamikaAgentPage() {
 
   if (authLoading || !user || user.role !== 'agent' || user.email !== 'anamika@nexoveda.com') {
     return (
-      <div className="min-h-screen bg-[#050e0a] text-gray-100 flex flex-col">
+      <div className="min-h-screen bg-white text-slate-800 flex flex-col">
         <Navbar />
         <div className="flex-grow flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
-          <p className="text-emerald-400 font-medium text-sm">Authenticating specialist credentials...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-800 mb-4"></div>
+          <p className="text-emerald-800 font-medium text-sm">Authenticating specialist credentials...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#050e0a] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-white text-slate-800 flex flex-col">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full flex flex-col gap-6">
         
         {/* Profile Card & Online Status Switcher */}
-        <section className="bg-emerald-950/15 border border-emerald-900/30 rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-center gap-4 backdrop-blur-md">
+        <section className="bg-slate-50 border border-slate-200 rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
           <div className="flex items-center gap-3">
             <img
               src={user.avatarUrl || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80'}
               alt={user.name}
-              className="w-14 h-14 rounded-full object-cover border border-emerald-800"
+              className="w-14 h-14 rounded-full object-cover border border-slate-300"
             />
             <div>
-              <h2 className="text-xl font-bold text-white">Dr. Anamika Verma (Gyne)</h2>
-              <p className="text-xs text-emerald-400 font-medium capitalize">
+              <h2 className="text-xl font-bold text-slate-800">Dr. Anamika Verma (Gyne)</h2>
+              <p className="text-xs text-slate-500 font-medium capitalize">
                 Role: Female Intimate Wellness Specialist ({user.gender})
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-[#050e0a] p-1.5 rounded-xl border border-emerald-900/40">
+          <div className="flex items-center gap-2 bg-slate-200/50 p-1.5 rounded-xl border border-slate-300/60">
             {(['online', 'busy', 'offline'] as const).map((s) => (
               <button
                 key={s}
@@ -391,11 +385,11 @@ export default function AnamikaAgentPage() {
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
                   status === s
                     ? s === 'online'
-                      ? 'bg-green-500 text-black'
+                      ? 'bg-green-600 text-white shadow-sm'
                       : s === 'busy'
-                      ? 'bg-yellow-500 text-black'
-                      : 'bg-red-500 text-white'
-                    : 'text-gray-400 hover:text-white'
+                      ? 'bg-yellow-500 text-black shadow-sm'
+                      : 'bg-red-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-800'
                 }`}
               >
                 {s}
@@ -408,15 +402,15 @@ export default function AnamikaAgentPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow items-stretch">
           
           {/* Left Panel: Active / Pending Chats list */}
-          <aside className="lg:col-span-1 bg-emerald-950/15 border border-emerald-900/30 rounded-3xl p-6 flex flex-col space-y-4 backdrop-blur-md">
-            <h3 className="text-base font-bold text-white border-b border-emerald-900/20 pb-2.5 flex items-center gap-2">
+          <aside className="lg:col-span-1 bg-slate-50 border border-slate-200 rounded-3xl p-6 flex flex-col space-y-4 shadow-sm">
+            <h3 className="text-base font-bold text-slate-800 border-b border-slate-200 pb-2.5 flex items-center gap-2">
               <span>🗂️</span> Room Workspace
             </h3>
 
             {loadingRooms ? (
-              <p className="text-xs text-gray-400 py-6 text-center">Loading rooms list...</p>
+              <p className="text-xs text-slate-400 py-6 text-center">Loading rooms list...</p>
             ) : rooms.length === 0 ? (
-              <p className="text-xs text-gray-500 py-6 text-center">No active chats in queue.</p>
+              <p className="text-xs text-slate-400 py-6 text-center">No active chats in queue.</p>
             ) : (
               <div className="space-y-3 flex-grow overflow-y-auto max-h-[500px] pr-1">
                 {rooms.map((room) => {
@@ -433,18 +427,18 @@ export default function AnamikaAgentPage() {
                       }}
                       className={`p-4 rounded-2xl border transition-all cursor-pointer text-xs space-y-2.5 ${
                         isActive
-                          ? 'bg-yellow-500 text-black border-yellow-500 font-bold'
+                          ? 'bg-emerald-800 text-white border-emerald-800 font-bold shadow-md'
                           : isAssignedToMe
-                          ? 'bg-emerald-950/40 text-white border-emerald-900 hover:bg-emerald-950/60'
-                          : 'bg-emerald-900/10 text-emerald-300 border-emerald-900/20 hover:bg-emerald-900/20'
+                          ? 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 shadow-sm'
+                          : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200/50'
                       }`}
                     >
                       <div className="flex justify-between items-center">
                         <span className="font-bold">Anon Customer</span>
                         <span className={`text-[8px] font-extrabold px-1.5 py-0.5 rounded border uppercase ${
                           room.status === 'pending'
-                            ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/35'
-                            : 'bg-green-500/20 text-green-400 border-green-500/35'
+                            ? 'bg-amber-100 text-amber-800 border-amber-200'
+                            : 'bg-green-100 text-green-800 border-green-200'
                         }`}>
                           {room.status}
                         </span>
@@ -453,6 +447,7 @@ export default function AnamikaAgentPage() {
                       <div className="text-[10px] space-y-0.5">
                         <p>Customer Profile: {room.customerAge}y, {room.customerGender}</p>
                         <p>Comfort Specialty: {room.preferredSpecialty} ({room.preferredGender})</p>
+                        {room.referenceNumber && <p className="font-mono mt-1 text-[9px] opacity-75">Ref: {room.referenceNumber}</p>}
                       </div>
 
                       {/* Claim action */}
@@ -462,7 +457,7 @@ export default function AnamikaAgentPage() {
                             e.stopPropagation();
                             handleClaimChat(room._id);
                           }}
-                          className="w-full mt-2 bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold py-2 rounded-xl text-[10px] transition-colors"
+                          className="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-white font-extrabold py-2 rounded-xl text-[10px] transition-colors border border-amber-600 shadow-sm"
                         >
                           Claim Consultation
                         </button>
@@ -475,28 +470,29 @@ export default function AnamikaAgentPage() {
           </aside>
 
           {/* Right Panel: Active Chat Panel Workspace */}
-          <section className="lg:col-span-2 bg-emerald-950/15 border border-emerald-900/30 rounded-3xl p-6 flex flex-col justify-between backdrop-blur-md min-h-[500px]">
+          <section className="lg:col-span-2 bg-slate-50 border border-slate-200 rounded-3xl p-6 flex flex-col justify-between shadow-sm min-h-[500px]">
             {activeRoom ? (
               <div className="flex flex-col h-full justify-between gap-4">
                 
                 {/* Active Chat Header */}
-                <div className="flex justify-between items-center border-b border-emerald-900/20 pb-3">
+                <div className="flex justify-between items-center border-b border-slate-200 pb-3">
                   <div>
-                    <h3 className="font-bold text-white text-sm">Consultation Workspace</h3>
-                    <p className="text-[10px] text-emerald-400">
+                    <h3 className="font-bold text-slate-800 text-sm">Consultation Workspace</h3>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
                       Age: {activeRoom.customerAge} | Gender: <span className="capitalize">{activeRoom.customerGender}</span>
+                      {activeRoom.referenceNumber && <span className="font-mono ml-2 border-l border-slate-300 pl-2">Ref: {activeRoom.referenceNumber}</span>}
                     </p>
                   </div>
                   <button
                     onClick={handleCloseChat}
-                    className="bg-red-950/40 hover:bg-red-950 border border-red-900/40 text-red-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Close Chat
                   </button>
                 </div>
 
                 {/* Messages Panel */}
-                <div className="flex-grow overflow-y-auto max-h-[300px] space-y-4 p-4 bg-[#050e0a]/40 border border-emerald-900/20 rounded-2xl">
+                <div className="flex-grow overflow-y-auto max-h-[300px] space-y-4 p-4 bg-white border border-slate-200 rounded-2xl">
                   {messages.map((m) => {
                     const isMe = m.sender === user.id;
                     return (
@@ -504,21 +500,21 @@ export default function AnamikaAgentPage() {
                         key={m._id}
                         className={`flex flex-col max-w-[80%] ${isMe ? 'ml-auto items-end' : 'mr-auto items-start'}`}
                       >
-                        <span className="text-[9px] text-gray-500 mb-0.5 font-bold">
+                        <span className="text-[9px] text-slate-400 mb-0.5 font-bold">
                           {isMe ? 'You' : 'Customer'}
                         </span>
                         
-                        <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
+                        <div className={`p-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
                           isMe 
-                            ? 'bg-yellow-500 text-black font-medium' 
-                            : 'bg-emerald-900/20 text-gray-200 border border-emerald-900/40'
+                            ? 'bg-emerald-800 text-white font-medium' 
+                            : 'bg-slate-100 text-slate-800 border border-slate-200'
                         }`}>
                           <p>{m.text}</p>
                           {m.attachmentUrl && (
                             <a 
                               href={m.attachmentUrl} 
                               target="_blank" 
-                              className={`block mt-2 font-bold underline text-[10px] ${isMe ? 'text-black' : 'text-yellow-400'}`}
+                              className={`block mt-2 font-bold underline text-[10px] ${isMe ? 'text-emerald-300' : 'text-emerald-800'}`}
                             >
                               📄 View Symptom Log
                             </a>
@@ -529,7 +525,7 @@ export default function AnamikaAgentPage() {
                   })}
 
                   {clientTyping && (
-                    <div className="text-[10px] text-emerald-400 italic font-medium animate-pulse">
+                    <div className="text-[10px] text-emerald-700 italic font-medium animate-pulse">
                       Customer is typing...
                     </div>
                   )}
@@ -537,30 +533,12 @@ export default function AnamikaAgentPage() {
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Canned templates */}
-                <div className="space-y-1.5 pt-2 border-t border-emerald-900/10">
-                  <span className="block text-[9px] font-semibold uppercase tracking-wider text-emerald-400">
-                    Clinical Templates
-                  </span>
-                  <div className="flex flex-col gap-1.5">
-                    {templates.map((temp, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSendMessage(undefined, temp)}
-                        className="w-full text-left bg-[#050e0a]/50 hover:bg-emerald-950/80 border border-emerald-900/30 p-2 rounded-xl text-[10px] text-emerald-300 hover:text-yellow-400 transition-colors text-ellipsis overflow-hidden whitespace-nowrap"
-                      >
-                        {temp}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Input Area */}
                 <form onSubmit={handleSendMessage} className="flex gap-2.5 pt-2">
                   <button
                     type="button"
                     onClick={simulateAttachment}
-                    className="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 p-3.5 border border-emerald-900/40 rounded-xl text-xs transition-colors cursor-pointer"
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3.5 border border-slate-200 rounded-xl text-xs transition-colors cursor-pointer"
                     title="Simulate Symptom logs upload"
                   >
                     📎
@@ -576,12 +554,12 @@ export default function AnamikaAgentPage() {
                     }}
                     onBlur={() => handleTyping(false)}
                     placeholder="Type clinical response..."
-                    className="flex-grow bg-[#050e0a]/80 border border-emerald-900/60 rounded-xl px-4 text-xs focus:border-yellow-500 focus:outline-none text-white font-medium"
+                    className="flex-grow bg-white border border-slate-200 rounded-xl px-4 text-xs focus:border-emerald-600 focus:outline-none text-slate-800 font-medium"
                   />
 
                   <button
                     type="submit"
-                    className="bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold px-6 rounded-xl text-xs transition-all cursor-pointer"
+                    className="bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold px-6 rounded-xl text-xs transition-all cursor-pointer"
                   >
                     Send
                   </button>
@@ -589,7 +567,7 @@ export default function AnamikaAgentPage() {
 
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center text-xs text-gray-500 py-16">
+              <div className="flex flex-col items-center justify-center h-full text-center text-xs text-slate-400 py-16">
                 <span className="text-4xl mb-3">💬</span>
                 <p>Select an active consultation from the room sidebar workspace to start messaging.</p>
               </div>
@@ -600,7 +578,7 @@ export default function AnamikaAgentPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-emerald-950/20 border-t border-emerald-900/30 py-8 text-center text-xs text-emerald-600 mt-12">
+      <footer className="bg-slate-50 border-t border-slate-200 py-8 text-center text-xs text-slate-500 mt-12">
         © 2026 Nexoveda Global. Dr. Anamika Verma Desk. All rights reserved.
       </footer>
     </div>

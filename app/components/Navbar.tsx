@@ -14,8 +14,13 @@ export default function Navbar() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLogout = () => {
+    const isStaff = user && (user.role === 'agent' || user.role === 'admin');
     logout();
-    window.location.href = '/login';
+    if (isStaff) {
+      window.location.href = '/staff';
+    } else {
+      window.location.href = '/login';
+    }
   };
 
   return (

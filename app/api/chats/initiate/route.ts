@@ -16,24 +16,42 @@ export async function POST(request: Request) {
       );
     }
 
+    if (Number(customerAge) < 18) {
+      return NextResponse.json(
+        { message: 'Consultation is only available for individuals aged 18 and older.' },
+        { status: 400 }
+      );
+    }
+
     // Match agent directly
     let selectedAgent = null;
 
-    if (preferredGender === 'male') {
-      selectedAgent = await User.findOne({ email: 'anil@nexoveda.com' });
-    } else if (preferredGender === 'female') {
-      selectedAgent = await User.findOne({ email: 'anamika@nexoveda.com' });
+    if (preferredSpecialty === 'mental_health') {
+      selectedAgent = await User.findOne({ email: 'smita@nexoveda.com' });
     } else {
-      const anil = await User.findOne({ email: 'anil@nexoveda.com' });
-      const anamika = await User.findOne({ email: 'anamika@nexoveda.com' });
-
-      if (anil && anamika) {
-        const anilChats = (await Conversation.find({ agent: anil._id, status: 'active' })).length;
-        const anamikaChats = (await Conversation.find({ agent: anamika._id, status: 'active' })).length;
-        selectedAgent = anilChats <= anamikaChats ? anil : anamika;
+      if (preferredGender === 'male') {
+        selectedAgent = await User.findOne({ email: 'harsh@nexoveda.com' });
+      } else if (preferredGender === 'female') {
+        selectedAgent = await User.findOne({ email: 'anamika@nexoveda.com' });
       } else {
-        selectedAgent = anil || anamika;
+        const harsh = await User.findOne({ email: 'harsh@nexoveda.com' });
+        const anamika = await User.findOne({ email: 'anamika@nexoveda.com' });
+
+        if (harsh && anamika) {
+          const harshChats = (await Conversation.find({ agent: harsh._id, status: 'active' })).length;
+          const anamikaChats = (await Conversation.find({ agent: anamika._id, status: 'active' })).length;
+          selectedAgent = harshChats <= anamikaChats ? harsh : anamika;
+        } else {
+          selectedAgent = harsh || anamika;
+        }
       }
+    }
+
+    // Generate unique reference number
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let referenceNumber = 'NEXO-';
+    for (let i = 0; i < 5; i++) {
+      referenceNumber += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
     // Create conversation
@@ -43,6 +61,7 @@ export async function POST(request: Request) {
       customerGender,
       preferredSpecialty,
       preferredGender,
+      referenceNumber,
       agent: selectedAgent ? selectedAgent._id : null,
       status: selectedAgent ? 'active' : 'pending'
     });

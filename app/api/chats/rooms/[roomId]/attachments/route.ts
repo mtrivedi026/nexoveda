@@ -9,7 +9,7 @@ export async function POST(
     const { filename } = body;
     return NextResponse.json({
       uploadUrl: `/api/upload/mock`,
-      fileUrl: `/attachments/mock_${Date.now()}_${filename || 'image.jpg'}`
+      fileUrl: `/symptom_report.pdf`
     });
   } catch (err: any) {
     return NextResponse.json(

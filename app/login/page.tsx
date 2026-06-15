@@ -22,10 +22,12 @@ export default function LoginPage() {
       if (user.role === 'admin') {
         window.location.href = '/admin';
       } else if (user.role === 'agent') {
-        if (user.email === 'anil@nexoveda.com') {
-          window.location.href = '/agent/anil';
+        if (user.email === 'harsh@nexoveda.com') {
+          window.location.href = '/agent/harsh';
         } else if (user.email === 'anamika@nexoveda.com') {
           window.location.href = '/agent/anamika';
+        } else if (user.email === 'smita@nexoveda.com') {
+          window.location.href = '/agent/smita';
         } else {
           window.location.href = '/agent';
         }
@@ -41,7 +43,7 @@ export default function LoginPage() {
     setLoading(true);
 
     const targetEmail = email.trim().toLowerCase();
-    const staffEmails = ['admin@nexoveda.com', 'anil@nexoveda.com', 'anamika@nexoveda.com'];
+    const staffEmails = ['admin@nexoveda.com', 'harsh@nexoveda.com', 'anamika@nexoveda.com', 'smita@nexoveda.com'];
     if (staffEmails.includes(targetEmail)) {
       setError('Invalid email or password.');
       setLoading(false);

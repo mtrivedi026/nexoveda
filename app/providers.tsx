@@ -9,7 +9,7 @@ interface User {
   name: string;
   email: string;
   role: 'customer' | 'agent' | 'admin';
-  specialty?: 'herbal' | 'medical' | null;
+  specialty?: 'herbal' | 'medical' | 'mental_health' | null;
   gender?: 'male' | 'female' | null;
   status: 'online' | 'offline' | 'busy';
   avatarUrl?: string;

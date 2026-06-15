@@ -411,23 +411,38 @@ async function startServer() {
         return res.status(400).json({ message: 'Please specify age, gender, specialist type, and gender preference.' });
       }
 
+      if (Number(customerAge) < 18) {
+        return res.status(400).json({ message: 'Consultation is only available for individuals aged 18 and older.' });
+      }
+
       let selectedAgent = null;
 
-      if (preferredGender === 'male') {
-        selectedAgent = await User.findOne({ email: 'anil@nexoveda.com' });
-      } else if (preferredGender === 'female') {
-        selectedAgent = await User.findOne({ email: 'anamika@nexoveda.com' });
+      if (preferredSpecialty === 'mental_health') {
+        selectedAgent = await User.findOne({ email: 'smita@nexoveda.com' });
       } else {
-        const anil = await User.findOne({ email: 'anil@nexoveda.com' });
-        const anamika = await User.findOne({ email: 'anamika@nexoveda.com' });
-
-        if (anil && anamika) {
-          const anilChats = (await Conversation.find({ agent: anil._id, status: 'active' })).length;
-          const anamikaChats = (await Conversation.find({ agent: anamika._id, status: 'active' })).length;
-          selectedAgent = anilChats <= anamikaChats ? anil : anamika;
+        if (preferredGender === 'male') {
+          selectedAgent = await User.findOne({ email: 'harsh@nexoveda.com' });
+        } else if (preferredGender === 'female') {
+          selectedAgent = await User.findOne({ email: 'anamika@nexoveda.com' });
         } else {
-          selectedAgent = anil || anamika;
+          const harsh = await User.findOne({ email: 'harsh@nexoveda.com' });
+          const anamika = await User.findOne({ email: 'anamika@nexoveda.com' });
+
+          if (harsh && anamika) {
+            const harshChats = (await Conversation.find({ agent: harsh._id, status: 'active' })).length;
+            const anamikaChats = (await Conversation.find({ agent: anamika._id, status: 'active' })).length;
+            selectedAgent = harshChats <= anamikaChats ? harsh : anamika;
+          } else {
+            selectedAgent = harsh || anamika;
+          }
         }
+      }
+
+      // Generate unique reference number
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let referenceNumber = 'NEXO-';
+      for (let i = 0; i < 5; i++) {
+        referenceNumber += chars.charAt(Math.floor(Math.random() * chars.length));
       }
 
       // Create conversation
@@ -437,6 +452,7 @@ async function startServer() {
         customerGender,
         preferredSpecialty,
         preferredGender,
+        referenceNumber,
         agent: selectedAgent ? selectedAgent._id : null,
         status: selectedAgent ? 'active' : 'pending'
       });
@@ -642,11 +658,9 @@ async function startServer() {
 
   // Chat Attachment upload simulation
   app.post('/api/chats/rooms/:roomId/attachments', (req, res) => {
-    const { filename } = req.body;
-    // Mock upload link
     res.json({
       uploadUrl: `http://localhost:${port}/api/upload/mock`,
-      fileUrl: `/attachments/mock_${Date.now()}_${filename || 'image.jpg'}`
+      fileUrl: `/symptom_report.pdf`
     });
   });
 
@@ -706,7 +720,9 @@ async function startServer() {
                 if (agent && agent.specialty === 'medical') {
                   replyText = `Hello, I am Dr. Anamika Verma (Gyne). As a medical health consultant, I suggest KSM-66 Ashwagandha with warm milk after meals to lower stress and muscle fatigue. How can I support you today?`;
                 } else if (agent && agent.specialty === 'herbal') {
-                  replyText = `Greetings, I am Dr. Anil Singh (B.A.M.S.). I recommend organic Himalayan Shilajit for cellular energy, or Eucalyptus honey elixir for fatigue. Do you have any other recovery issues?`;
+                  replyText = `Greetings, I am Dr. Harsh Rawat (B.A.M.S.). I recommend organic Himalayan Shilajit for cellular energy, or Eucalyptus honey elixir for fatigue. Do you have any other recovery issues?`;
+                } else if (agent && agent.specialty === 'mental_health') {
+                  replyText = `Hello, I am Ms. Smita Gupta (M. A. Psychology). As a mental health support advisor, how can I help you today? Please feel free to share whatever is on your mind.`;
                 }
 
                 const replyMsg = await Message.create({

@@ -19,10 +19,11 @@ interface Conversation {
   customerAge: number;
   customerGender: string;
   agent: any | null;
-  preferredSpecialty: 'herbal' | 'medical';
+  preferredSpecialty: 'herbal' | 'medical' | 'mental_health';
   preferredGender: 'male' | 'female' | 'any';
   status: 'pending' | 'active' | 'closed';
   lastMessageAt: string;
+  referenceNumber?: string;
 }
 
 export default function ChatWidget() {
@@ -37,6 +38,7 @@ export default function ChatWidget() {
   // Lobby form states
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('male');
+  const [specialty, setSpecialty] = useState<'herbal' | 'mental_health'>('herbal');
   const [prefGender, setPrefGender] = useState<'male' | 'female'>('male');
 
   // Room states
@@ -107,6 +109,18 @@ export default function ChatWidget() {
 
   // Shared message poller ref so we can trigger immediate refetch
   const pollMessagesNow = useRef<(() => void) | null>(null);
+  const roomClosedRef = useRef<string | null>(null);
+
+  const handleRoomClosedByAdvisor = (roomId: string) => {
+    if (roomClosedRef.current === roomId) return;
+    roomClosedRef.current = roomId;
+
+    setRoom(null);
+    setMessages([]);
+    setChatOpen(false); // Close the widget as requested
+    setActiveTab('chat');
+    alert('Consultation closed by matched advisor.');
+  };
 
   useEffect(() => {
     let interval: any;
@@ -120,11 +134,10 @@ export default function ChatWidget() {
               const newAgentId = data.agent && typeof data.agent === 'object' ? data.agent._id : data.agent;
               
               if (data.status !== room.status || currentAgentId !== newAgentId) {
-                setRoom(data);
                 if (data.status === 'closed') {
-                  setRoom(null);
-                  setMessages([]);
-                  alert('Consultation closed by matched advisor.');
+                  handleRoomClosedByAdvisor(room._id);
+                } else {
+                  setRoom(data);
                 }
               }
             }
@@ -196,9 +209,7 @@ export default function ChatWidget() {
 
       socket.on('chat-closed', (closedRoom: Conversation) => {
         if (closedRoom._id === room._id) {
-          setRoom(null);
-          setMessages([]);
-          alert('Consultation closed by matched advisor.');
+          handleRoomClosedByAdvisor(room._id);
         }
       });
 
@@ -214,8 +225,8 @@ export default function ChatWidget() {
   const handleStartChat = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    if (!age || Number(age) < 12 || Number(age) > 120) {
-      setErrorMessage('Please enter a valid age (12-120).');
+    if (!age || Number(age) < 18 || Number(age) > 120) {
+      setErrorMessage('Consultation is only available for individuals aged 18 and older.');
       return;
     }
     setInitiating(true);
@@ -227,8 +238,8 @@ export default function ChatWidget() {
         body: JSON.stringify({
           customerAge: Number(age),
           customerGender: gender,
-          preferredSpecialty: 'herbal',
-          preferredGender: prefGender
+          preferredSpecialty: specialty,
+          preferredGender: specialty === 'mental_health' ? 'female' : prefGender
         })
       });
       const data = await res.json();
@@ -566,6 +577,20 @@ export default function ChatWidget() {
                 <form onSubmit={handleStartChat} className="space-y-4">
                   <div>
                     <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                      Consultation Type *
+                    </label>
+                    <select
+                      value={specialty}
+                      onChange={(e) => setSpecialty(e.target.value as 'herbal' | 'mental_health')}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none text-slate-800 font-medium"
+                    >
+                      <option value="herbal">Herbal Product Consultation</option>
+                      <option value="mental_health">Mental Health Support</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                       Your Age *
                     </label>
                     <input
@@ -592,27 +617,29 @@ export default function ChatWidget() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                      Advisor Gender Preference *
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {(['male', 'female'] as const).map((g) => (
-                        <button
-                          key={g}
-                          type="button"
-                          onClick={() => setPrefGender(g)}
-                          className={`py-2 rounded-xl text-xs font-bold capitalize transition-all border ${
-                            prefGender === g
-                              ? 'bg-yellow-500 text-black border-yellow-500 shadow-sm'
-                              : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
-                          }`}
-                        >
-                          {g}
-                        </button>
-                      ))}
+                  {specialty === 'herbal' && (
+                    <div>
+                      <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        Advisor Gender Preference *
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {(['male', 'female'] as const).map((g) => (
+                          <button
+                            key={g}
+                            type="button"
+                            onClick={() => setPrefGender(g)}
+                            className={`py-2 rounded-xl text-xs font-bold capitalize transition-all border ${
+                              prefGender === g
+                                ? 'bg-yellow-500 text-black border-yellow-500 shadow-sm'
+                                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+                            }`}
+                          >
+                            {g}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <button
                     type="submit"
@@ -632,6 +659,11 @@ export default function ChatWidget() {
                 <div className="space-y-1">
                   <h4 className="text-sm font-bold text-slate-800">Connecting to Advisor...</h4>
                   <p className="text-[10px] text-emerald-600">Matching in lobby queue...</p>
+                  {room.referenceNumber && (
+                    <p className="text-[10px] text-slate-500 font-mono mt-1">
+                      Ref No: <span className="font-bold">{room.referenceNumber}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div className="bg-white border border-slate-100 p-4 rounded-2xl max-w-xs shadow-sm">
@@ -663,6 +695,9 @@ export default function ChatWidget() {
                         {room.agent && typeof room.agent === 'object' && room.agent.name ? room.agent.name : 'Wellness Specialist'}
                       </p>
                       <span className="text-[9px] text-emerald-600 capitalize">Online</span>
+                      {room.referenceNumber && (
+                        <span className="text-[9px] text-slate-400 block font-mono">Ref: {room.referenceNumber}</span>
+                      )}
                     </div>
                   </div>
                   <button
