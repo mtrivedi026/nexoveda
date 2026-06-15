@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import { useChat, useCart } from './providers';
+import { motion } from 'framer-motion';
+import ScrollReveal from './components/ScrollReveal';
 
 // Ingredients Data
 const INGREDIENTS = [
@@ -138,9 +140,15 @@ export default function Home() {
     <main className="bg-[#030906] min-h-screen text-gray-100 scroll-smooth font-sans relative overflow-x-hidden selection:bg-yellow-500 selection:text-black">
       
       {/* Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="absolute top-[30%] right-[-10%] w-[45vw] h-[45vw] bg-yellow-500/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-[10%] left-[10%] w-[50vw] h-[50vw] bg-emerald-600/5 rounded-full blur-[180px] pointer-events-none z-0"></div>
+      <motion.div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none z-0"
+        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}></motion.div>
+      <motion.div className="absolute top-[30%] right-[-10%] w-[45vw] h-[45vw] bg-yellow-500/5 rounded-full blur-[150px] pointer-events-none z-0"
+        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}></motion.div>
+      <motion.div className="absolute bottom-[10%] left-[10%] w-[50vw] h-[50vw] bg-emerald-600/5 rounded-full blur-[180px] pointer-events-none z-0"
+        animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}></motion.div>
 
       <Navbar />
 
@@ -155,20 +163,20 @@ export default function Home() {
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-6xl md:text-8xl font-black leading-tight tracking-tight text-white">
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="text-6xl md:text-8xl font-black leading-tight tracking-tight text-white">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 drop-shadow-sm">Adivance</span>
                 <br />
                 <span className="text-white">Capsule</span>
-              </h1>
+              </motion.h1>
 
               <h2 className="text-2xl md:text-3xl text-emerald-300/95 font-extrabold tracking-wide">
                 Reclaim Strength, Stamina, Power & Vitality
               </h2>
             </div>
 
-            <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
+            <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
               Engineered using wild-harvested Himalayan Shilajit, pure KSM-66 Ashwagandha extract, Safed Musli, and Gokshura. A medical-grade Ayurvedic blend clinically optimized to enhance daily endurance, speed muscle recovery, and support marital wellbeing.
-            </p>
+            </motion.p>
 
             {/* Quick Benefits Badges */}
             <div className="grid grid-cols-2 gap-4 max-w-lg">
@@ -234,6 +242,7 @@ export default function Home() {
       </section>
 
       {/* Benefits Section */}
+      <ScrollReveal>
       <section id="benefits" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30 bg-[#020705]/60 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
@@ -265,8 +274,10 @@ export default function Home() {
 
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Ingredients Section */}
+      <ScrollReveal>
       <section id="ingredients" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
@@ -302,8 +313,10 @@ export default function Home() {
 
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Verified Reviews Section */}
+      <ScrollReveal>
       <section id="reviews" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30 bg-[#020705]/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
@@ -345,8 +358,10 @@ export default function Home() {
 
         </div>
       </section>
+      </ScrollReveal>
 
       {/* FAQ Section */}
+      <ScrollReveal>
       <section id="faq" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30">
         <div className="max-w-4xl mx-auto px-6 md:px-12">
           
@@ -391,8 +406,10 @@ export default function Home() {
 
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Contact Section */}
+      <ScrollReveal>
       <section id="contact" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30 bg-[#020705]/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
@@ -502,6 +519,7 @@ export default function Home() {
 
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Footer */}
       <footer className="border-t border-emerald-950/40 bg-[#010302] py-12 text-center text-xs text-gray-500 font-medium">
