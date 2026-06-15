@@ -128,7 +128,7 @@ export default function DashboardPage() {
 
           <div className="bg-emerald-950/40 border border-emerald-850 p-5 rounded-2xl text-left md:text-right relative z-10 w-full md:w-auto">
             <p className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold mb-1">Nexoveda Loyalty Balance</p>
-            <p className="text-3xl font-black text-yellow-400">${user.loyaltyPoints.toFixed(2)} <span className="text-sm font-bold text-white">Points</span></p>
+            <p className="text-3xl font-black text-yellow-400">${(user.loyaltyPoints || 0).toFixed(2)} <span className="text-sm font-bold text-white">Points</span></p>
             <p className="text-[10px] text-gray-400 mt-1 max-w-xs">
               Earn 5% points back on every order. Redeem 1 point for $0.10 discount at checkout.
             </p>

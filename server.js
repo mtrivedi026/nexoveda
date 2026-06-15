@@ -116,7 +116,14 @@ async function startServer() {
       );
       res.status(201).json({
         token,
-        user: { id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role }
+        user: { 
+          id: newUser._id, 
+          name: newUser.name, 
+          email: newUser.email, 
+          role: newUser.role,
+          loyaltyPoints: 0,
+          status: 'offline'
+        }
       });
     } catch (err) {
       res.status(500).json({ message: 'Server error', error: err.message });

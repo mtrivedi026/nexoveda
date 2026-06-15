@@ -44,7 +44,14 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         token,
-        user: { id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role }
+        user: { 
+          id: newUser._id, 
+          name: newUser.name, 
+          email: newUser.email, 
+          role: newUser.role,
+          loyaltyPoints: 0,
+          status: 'offline'
+        }
       },
       { status: 201 }
     );
