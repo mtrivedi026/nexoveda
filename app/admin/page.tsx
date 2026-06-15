@@ -82,6 +82,7 @@ export default function AdminPage() {
   const [newProductDesc, setNewProductDesc] = useState('');
   const [newProductCategory, setNewProductCategory] = useState('');
   const [newProductImage, setNewProductImage] = useState('');
+  const [newProductFile, setNewProductFile] = useState<File | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
 
   const [selectedAgentForRoom, setSelectedAgentForRoom] = useState<{ [roomId: string]: string }>({});
@@ -242,6 +243,23 @@ export default function AdminPage() {
     }
     setIsAddingProduct(true);
     try {
+      let finalImageUrl = newProductImage;
+      
+      if (newProductFile) {
+        const formData = new FormData();
+        formData.append('file', newProductFile);
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok) throw new Error(uploadData.message || 'Failed to upload image');
+        finalImageUrl = uploadData.url;
+      }
+
       const res = await fetch('/api/products', {
         method: 'POST',
         headers: {
@@ -253,7 +271,7 @@ export default function AdminPage() {
           price: Number(newProductPrice),
           description: newProductDesc,
           category: newProductCategory,
-          image: newProductImage
+          image: finalImageUrl
         })
       });
       const data = await res.json();
@@ -264,6 +282,7 @@ export default function AdminPage() {
       setNewProductDesc('');
       setNewProductCategory('');
       setNewProductImage('');
+      setNewProductFile(null);
       showFeedback('Product added successfully!');
     } catch (err: any) {
       alert(err.message);
@@ -554,8 +573,31 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Image URL</label>
-                <input type="text" value={newProductImage} onChange={e => setNewProductImage(e.target.value)} placeholder="/image/file.jpeg or https://..." className="w-full bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" />
+                <label className="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Product Image (File or URL)</label>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={e => {
+                    if (e.target.files && e.target.files[0]) {
+                      setNewProductFile(e.target.files[0]);
+                      setNewProductImage('');
+                    }
+                  }} 
+                  className="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-950 file:text-emerald-400 hover:file:bg-emerald-900/80 cursor-pointer mb-2" 
+                />
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-gray-500 uppercase">OR URL:</span>
+                  <input 
+                    type="text" 
+                    value={newProductImage} 
+                    onChange={e => {
+                      setNewProductImage(e.target.value);
+                      setNewProductFile(null);
+                    }} 
+                    placeholder="https://..." 
+                    className="flex-grow bg-[#050e0a] border border-emerald-900/60 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" 
+                  />
+                </div>
               </div>
 
               <div>
