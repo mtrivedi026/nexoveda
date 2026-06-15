@@ -8,6 +8,6 @@ export async function GET() {
     status: 'Debug Endpoint',
     SMTP_USER_CONFIGURED: hasUser,
     SMTP_PASS_CONFIGURED: hasPass,
-    USER_PREVIEW: hasUser ? process.env.SMTP_USER.substring(0, 3) + '...' : 'NONE'
+    USER_PREVIEW: (hasUser && process.env.SMTP_USER) ? process.env.SMTP_USER.substring(0, 3) + '...' : 'NONE'
   });
 }
