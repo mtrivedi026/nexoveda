@@ -145,7 +145,7 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-32">
+      <section className="relative overflow-hidden max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-16">
         <div className="grid md:grid-cols-12 gap-16 items-center">
           
           {/* Left Text Column */}
@@ -234,7 +234,7 @@ export default function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section id="benefits" className="py-24 md:py-32 relative z-10 border-t border-emerald-950/30 bg-[#020705]/60 backdrop-blur-sm">
+      <section id="benefits" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30 bg-[#020705]/60 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
@@ -267,7 +267,7 @@ export default function Home() {
       </section>
 
       {/* Ingredients Section */}
-      <section id="ingredients" className="py-24 md:py-32 relative z-10 border-t border-emerald-950/30">
+      <section id="ingredients" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
@@ -304,7 +304,7 @@ export default function Home() {
       </section>
 
       {/* Verified Reviews Section */}
-      <section id="reviews" className="py-24 md:py-32 relative z-10 border-t border-emerald-950/30 bg-[#020705]/80 backdrop-blur-sm">
+      <section id="reviews" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30 bg-[#020705]/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
@@ -347,7 +347,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-24 md:py-32 relative z-10 border-t border-emerald-950/30">
+      <section id="faq" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30">
         <div className="max-w-4xl mx-auto px-6 md:px-12">
           
           <div className="text-center mb-20 space-y-4">
@@ -393,7 +393,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 md:py-32 relative z-10 border-t border-emerald-950/30 bg-[#020705]/80 backdrop-blur-sm">
+      <section id="contact" className="py-16 md:py-16 relative z-10 border-t border-emerald-950/30 bg-[#020705]/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
           <div className="grid md:grid-cols-2 gap-16 items-start">
