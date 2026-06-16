@@ -7,9 +7,9 @@ export async function GET() {
     const { User } = db;
     const UserModel = User as any;
     
-    const result1 = await UserModel.updateOne({_id: 'agent-harsh'}, {$set: {name: 'Male Herbal Consultant'}});
-    const result2 = await UserModel.updateOne({_id: 'agent-anamika'}, {$set: {name: 'Female Herbal Consultant'}});
-    const result3 = await UserModel.updateOne({_id: 'agent-smita'}, {$set: {name: 'Female Mental Health Support Specialist'}});
+    const result1 = await UserModel.updateOne({email: 'harsh@nexoveda.com'}, {$set: {name: 'Male Herbal Consultant'}});
+    const result2 = await UserModel.updateOne({email: 'anamika@nexoveda.com'}, {$set: {name: 'Female Herbal Consultant'}});
+    const result3 = await UserModel.updateOne({email: 'smita@nexoveda.com'}, {$set: {name: 'Female Mental Health Support Specialist'}});
     
     return NextResponse.json({
       success: true,
