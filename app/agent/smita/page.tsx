@@ -370,7 +370,7 @@ export default function SmitaAgentPage() {
               className="w-14 h-14 rounded-full object-cover border border-slate-300"
             />
             <div>
-              <h2 className="text-xl font-bold text-slate-800">Ms. Smita Gupta (M. A. Psychology)</h2>
+              <h2 className="text-xl font-bold text-slate-800">Female Mental Health Support Specialist</h2>
               <p className="text-xs text-slate-500 font-medium capitalize">
                 Role: Female Mental Health Support Specialist ({user.gender})
               </p>
@@ -587,7 +587,7 @@ export default function SmitaAgentPage() {
 
       {/* Footer */}
       <footer className="bg-slate-50 border-t border-slate-200 py-8 text-center text-xs text-slate-500 mt-12">
-        © 2026 Nexoveda Global. Ms. Smita Gupta Desk. All rights reserved.
+        © 2026 Nexoveda Global. Female Mental Health Support Specialist Desk. All rights reserved.
       </footer>
     </div>
   );

@@ -370,7 +370,7 @@ export default function AnamikaAgentPage() {
               className="w-14 h-14 rounded-full object-cover border border-slate-300"
             />
             <div>
-              <h2 className="text-xl font-bold text-slate-800">Dr. Anamika Verma (Gyne)</h2>
+              <h2 className="text-xl font-bold text-slate-800">Female Herbal Consultant</h2>
               <p className="text-xs text-slate-500 font-medium capitalize">
                 Role: Female Intimate Wellness Specialist ({user.gender})
               </p>
@@ -587,7 +587,7 @@ export default function AnamikaAgentPage() {
 
       {/* Footer */}
       <footer className="bg-slate-50 border-t border-slate-200 py-8 text-center text-xs text-slate-500 mt-12">
-        © 2026 Nexoveda Global. Dr. Anamika Verma Desk. All rights reserved.
+        © 2026 Nexoveda Global. Female Herbal Consultant Desk. All rights reserved.
       </footer>
     </div>
   );
