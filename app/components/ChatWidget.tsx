@@ -513,7 +513,7 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 h-[600px] bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-between text-slate-800 animate-slide-up">
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50 sm:w-96 h-[85vh] sm:h-[600px] max-h-[700px] bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-between text-slate-800 animate-slide-up">
       
       {/* Light Theme Header */}
       <header className="bg-gradient-to-r from-emerald-800 to-emerald-950 px-6 py-4 flex justify-between items-center text-white border-b border-emerald-900/10">
