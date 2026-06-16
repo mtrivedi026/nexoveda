@@ -14,6 +14,19 @@ export async function GET(
     if (!room) {
       return NextResponse.json({ message: 'Room not found' }, { status: 404 });
     }
+
+    // Passive idle check: Close if inactive for > 30 mins
+    if (room.status === 'pending' || room.status === 'active') {
+      const lastActivity = new Date(room.lastMessageAt || room.updatedAt || room.createdAt).getTime();
+      if (Date.now() - lastActivity > 30 * 60 * 1000) {
+        room.status = 'closed';
+        if (typeof room.save === 'function') {
+          await room.save();
+        } else {
+          await Conversation.findByIdAndUpdate(roomId, { status: 'closed' });
+        }
+      }
+    }
     
     // Populate agent manually if it is a Mongoose document
     let populatedRoom = room;

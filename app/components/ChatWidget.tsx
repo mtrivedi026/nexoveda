@@ -115,12 +115,11 @@ export default function ChatWidget() {
   const handleRoomClosedByAdvisor = (roomId: string) => {
     if (roomClosedRef.current === roomId) return;
     roomClosedRef.current = roomId;
-
+    alert('Consultation session has ended.');
     setRoom(null);
     setMessages([]);
     setChatOpen(false); // Close the widget as requested
     setActiveTab('chat');
-    alert('Consultation closed by matched advisor.');
   };
 
   useEffect(() => {

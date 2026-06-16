@@ -727,6 +727,37 @@ async function startServer() {
     });
   });
 
+  // --- Idle Chat Cleanup Service ---
+  // Run every 5 minutes to check for chats inactive for > 30 mins
+  setInterval(async () => {
+    try {
+      const thirtyMinsAgo = Date.now() - 30 * 60 * 1000;
+      const { Conversation } = db;
+      if (!Conversation) return;
+
+      const activeConversations = await Conversation.find({ status: { $in: ['pending', 'active'] } });
+      const idleConversations = activeConversations.filter((c) => {
+        const lastMsgTime = new Date(c.lastMessageAt || c.updatedAt || c.createdAt).getTime();
+        return lastMsgTime < thirtyMinsAgo;
+      });
+
+      let updatedCount = 0;
+      for (const conv of idleConversations) {
+        await Conversation.findByIdAndUpdate(conv._id, { status: 'closed' });
+        conv.status = 'closed';
+        io.to(conv._id.toString()).emit('chat-closed', conv);
+        console.log(`🔒 Auto-closed idle conversation ${conv._id} due to 30 mins inactivity.`);
+        updatedCount++;
+      }
+
+      if (updatedCount > 0) {
+        io.to('admins').emit('queue-updated');
+      }
+    } catch (err) {
+      console.error('❌ Error during idle chat cleanup:', err.message);
+    }
+  }, 5 * 60 * 1000);
+
   // Catch-all
   if (isStandalone) {
     app.all(/.*/, (req, res) => {
