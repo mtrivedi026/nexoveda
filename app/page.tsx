@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import { useChat, useCart } from './providers';
 import { motion } from 'framer-motion';
 import ScrollReveal from './components/ScrollReveal';
+import AboutSection from './components/AboutSection';
 
 // Ingredients Data
 const INGREDIENTS = [
@@ -240,6 +241,9 @@ export default function Home() {
 
         </div>
       </section>
+
+      {/* About Section */}
+      <AboutSection />
 
       {/* Benefits Section */}
       <ScrollReveal>
