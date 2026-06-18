@@ -9,7 +9,7 @@ export default function AboutSection() {
           
           <div className="text-center mb-16 space-y-4">
             <span className="text-xs uppercase font-extrabold tracking-widest text-yellow-400 bg-yellow-500/5 border border-yellow-500/20 px-3 py-1 rounded-full">About The Company</span>
-            <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 tracking-tight leading-tight">
+            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
               Information About Nexoveda
             </h2>
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto pt-4">
