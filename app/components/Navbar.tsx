@@ -36,7 +36,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-22">
           
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center shrink-0 pr-4">
             <Link href="/" className="flex items-center gap-2.5 group">
               <span className="text-2xl sm:text-3xl group-hover:rotate-12 transition-transform duration-300">🌿</span>
               <span className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 tracking-tight">Nexoveda</span>
@@ -44,7 +44,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-black uppercase tracking-wider text-emerald-100/75">
+          <div className="hidden lg:flex items-center justify-center gap-4 xl:gap-6 text-[10px] xl:text-xs font-black uppercase tracking-wider text-emerald-100/75 flex-1 px-2 whitespace-nowrap">
             <Link href="/" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Home</Link>
             
             {/* About Dropdown */}
@@ -142,7 +142,7 @@ export default function Navbar() {
           </div>
 
           {/* Action Area */}
-          <div className="flex items-center gap-3 sm:gap-5">
+          <div className="flex items-center gap-3 sm:gap-5 shrink-0 pl-4">
             
             {/* Cart Link */}
             {!isStaff && (
