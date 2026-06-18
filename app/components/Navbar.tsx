@@ -14,6 +14,8 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileAssessOpen, setIsMobileAssessOpen] = useState(false);
   const [isDesktopAssessOpen, setIsDesktopAssessOpen] = useState(false);
+  const [isDesktopAboutOpen, setIsDesktopAboutOpen] = useState(false);
+  const [isMobileAboutOpen, setIsMobileAboutOpen] = useState(false);
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -44,8 +46,38 @@ export default function Navbar() {
           {/* Desktop Links */}
           <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-black uppercase tracking-wider text-emerald-100/75">
             <Link href="/" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Home</Link>
-            <Link href="/about" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Information About Nexoveda</Link>
-            <Link href="/about" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">About Us</Link>
+            
+            {/* About Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsDesktopAboutOpen(!isDesktopAboutOpen)}
+                className={`flex items-center gap-1 transition-colors bg-transparent border-none cursor-pointer text-xs font-black uppercase tracking-wider text-emerald-100/75 relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:bg-yellow-400 after:transition-all after:duration-300 ${isDesktopAboutOpen ? 'text-yellow-400 after:w-full' : 'hover:text-yellow-400 after:w-0 hover:after:w-full'}`}
+              >
+                About Nexoveda <span className="text-[10px]">{isDesktopAboutOpen ? '▲' : '▼'}</span>
+              </button>
+              
+              {isDesktopAboutOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsDesktopAboutOpen(false)}></div>
+                  <div className="absolute left-0 mt-2 w-56 bg-emerald-950 border border-emerald-800 rounded-xl shadow-2xl py-2 z-50 transition-all duration-200">
+                    <Link 
+                      href="/about" 
+                      onClick={() => setIsDesktopAboutOpen(false)}
+                      className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors"
+                    >
+                      Information About Nexoveda
+                    </Link>
+                    <Link 
+                      href="/about" 
+                      onClick={() => setIsDesktopAboutOpen(false)}
+                      className="block px-4.5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 hover:bg-yellow-500 hover:text-black transition-colors border-t border-emerald-900/50"
+                    >
+                      About Us
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
             <Link href="/shop" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Shop Catalog</Link>
             
             {!isStaff && (
@@ -183,8 +215,32 @@ export default function Navbar() {
         <div className="lg:hidden border-t border-emerald-950/30 bg-[#030906]/95 backdrop-blur-xl px-4 py-6 shadow-2xl">
           <div className="flex flex-col gap-4 text-xs font-black uppercase tracking-wider text-emerald-100/80">
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">Home</Link>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/about" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">Information About Nexoveda</Link>
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/about" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">About Us</Link>
+            
+            {/* Mobile About Accordion */}
+            <div>
+              <button 
+                onClick={() => setIsMobileAboutOpen(!isMobileAboutOpen)}
+                className="w-full flex justify-between items-center py-2 hover:text-yellow-400 border-b border-emerald-900/20 bg-transparent border-none cursor-pointer uppercase font-black"
+              >
+                About Nexoveda <span>{isMobileAboutOpen ? '▲' : '▼'}</span>
+              </button>
+              {isMobileAboutOpen && (
+                <div className="pl-4 mt-2 flex flex-col gap-2 border-l-2 border-emerald-900/40 py-2">
+                  <Link 
+                    onClick={() => setIsMobileMenuOpen(false)} href="/about"
+                    className="py-1.5 text-[10px] text-emerald-300 hover:text-yellow-400 uppercase font-black"
+                  >
+                    Information About Nexoveda
+                  </Link>
+                  <Link 
+                    onClick={() => setIsMobileMenuOpen(false)} href="/about"
+                    className="py-1.5 text-[10px] text-emerald-300 hover:text-yellow-400 uppercase font-black"
+                  >
+                    About Us
+                  </Link>
+                </div>
+              )}
+            </div>
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/shop" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">Shop Catalog</Link>
             
             {!isStaff && (
