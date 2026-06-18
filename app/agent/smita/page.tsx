@@ -370,9 +370,9 @@ export default function SmitaAgentPage() {
               className="w-14 h-14 rounded-full object-cover border border-slate-300"
             />
             <div>
-              <h2 className="text-xl font-bold text-slate-800">Female Mental Health Support Specialist</h2>
+              <h2 className="text-xl font-bold text-slate-800">Psychological Wellness Specialist</h2>
               <p className="text-xs text-slate-500 font-medium capitalize">
-                Role: Female Mental Health Support Specialist ({user.gender})
+                Role: Psychological Wellness Specialist ({user.gender})
               </p>
             </div>
           </div>
@@ -585,10 +585,11 @@ export default function SmitaAgentPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-slate-50 border-t border-slate-200 py-8 text-center text-xs text-slate-500 mt-12">
-        © 2026 Nexoveda Global. Female Mental Health Support Specialist Desk. All rights reserved.
-      </footer>
+        {/* Footer */}
+        <footer className="mt-6 text-center text-xs font-medium text-slate-400">
+          <p>Important: All chats are strictly confidential and encrypted end-to-end.</p>
+          <p className="mt-1">© 2026 Nexoveda Global. Psychological Wellness Specialist Desk. All rights reserved.</p>
+        </footer>
     </div>
   );
 }

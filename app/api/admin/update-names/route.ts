@@ -9,7 +9,7 @@ export async function GET() {
     
     const result1 = await UserModel.updateOne({email: 'harsh@nexoveda.com'}, {$set: {name: 'Male Herbal Consultant'}});
     const result2 = await UserModel.updateOne({email: 'anamika@nexoveda.com'}, {$set: {name: 'Female Herbal Consultant'}});
-    const result3 = await UserModel.updateOne({email: 'smita@nexoveda.com'}, {$set: {name: 'Female Mental Health Support Specialist'}});
+    const result3 = await UserModel.updateOne({email: 'smita@nexoveda.com'}, {$set: {name: 'Psychological Wellness Specialist'}});
     
     // Fetch the updated names to prove they are updated
     const harsh = await UserModel.findOne({email: 'harsh@nexoveda.com'});

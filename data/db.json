@@ -2,45 +2,45 @@
   "users": [
     {
       "_id": "agent-anamika",
-      "name": "Dr. Anamika Verma (Gyne)",
+      "name": "Female Herbal Consultant",
       "email": "anamika@nexoveda.com",
       "role": "agent",
       "specialty": "medical",
       "gender": "female",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
+      "password": "$2b$10$3QKDQqAxO0NRNhu5UHKxLObFQfFMnEQlq/ZEyyl9DWm8mKhO/rsBm",
       "loyaltyPoints": 0,
       "createdAt": "2026-06-15T18:05:13.797Z",
-      "updatedAt": "2026-06-15T19:36:18.047Z"
+      "updatedAt": "2026-06-18T06:15:05.125Z"
     },
     {
       "_id": "agent-harsh",
-      "name": "Dr. Harsh Rawat (B.A.M.S.)",
+      "name": "Male Herbal Consultant",
       "email": "harsh@nexoveda.com",
       "role": "agent",
       "specialty": "herbal",
       "gender": "male",
       "status": "online",
-      "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
+      "avatarUrl": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&auto=format&fit=crop&q=80",
+      "password": "$2b$10$3QKDQqAxO0NRNhu5UHKxLObFQfFMnEQlq/ZEyyl9DWm8mKhO/rsBm",
       "loyaltyPoints": 0,
       "createdAt": "2026-06-15T18:05:13.809Z",
-      "updatedAt": "2026-06-15T19:36:18.064Z"
+      "updatedAt": "2026-06-18T06:15:05.138Z"
     },
     {
       "_id": "agent-smita",
-      "name": "Ms. Smita Gupta (M. A. Psychology)",
+      "name": "Female Mental Health Support Specialist",
       "email": "smita@nexoveda.com",
       "role": "agent",
       "specialty": "mental_health",
       "gender": "female",
       "status": "online",
       "avatarUrl": "https://images.unsplash.com/photo-1594744803329-e58b31de215f?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
+      "password": "$2b$10$3QKDQqAxO0NRNhu5UHKxLObFQfFMnEQlq/ZEyyl9DWm8mKhO/rsBm",
       "loyaltyPoints": 0,
       "createdAt": "2026-06-15T18:05:13.809Z",
-      "updatedAt": "2026-06-15T19:36:18.068Z"
+      "updatedAt": "2026-06-18T06:15:05.141Z"
     },
     {
       "_id": "admin-main",
@@ -51,10 +51,10 @@
       "gender": null,
       "status": "offline",
       "avatarUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
-      "password": "$2b$10$gJAo3x5pVsHsJV7WZd4lr.kjq7Pd/xv8vxmjYNPzjig3rH/gEoY8e",
+      "password": "$2b$10$3QKDQqAxO0NRNhu5UHKxLObFQfFMnEQlq/ZEyyl9DWm8mKhO/rsBm",
       "loyaltyPoints": 0,
       "createdAt": "2026-06-15T18:05:13.809Z",
-      "updatedAt": "2026-06-15T19:36:18.073Z",
+      "updatedAt": "2026-06-18T06:15:05.145Z",
       "$set": {
         "password": "$2b$10$LAUvgpR6YIH6kjPgag2dD.fRiZFCoAbvkWtyycFVvlmWxEIQXlCcS"
       }

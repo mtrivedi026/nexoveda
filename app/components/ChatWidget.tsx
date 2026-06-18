@@ -590,7 +590,7 @@ export default function ChatWidget() {
                     >
                       <option value="" disabled>Choose Consultation Type</option>
                       <option value="herbal">Herbal Product Consultation</option>
-                      <option value="mental_health">Mental Health Support</option>
+                      <option value="mental_health">Psychological Wellness</option>
                     </select>
                   </div>
 
