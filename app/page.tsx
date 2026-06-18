@@ -116,13 +116,30 @@ export default function Home() {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setChatTab('chat');
-    setChatOpen(true);
-    setContactName('');
-    setContactPhone('');
-    setContactMsg('');
+    try {
+      await fetch('https://formsubmit.co/ajax/nexoveda@gmail.com', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            name: contactName,
+            phone: contactPhone,
+            message: contactMsg,
+            _subject: 'New Contact Request - Nexoveda Landing Page'
+        })
+      });
+      alert('Your request has been sent to nexoveda@gmail.com. We will contact you soon!');
+      setContactName('');
+      setContactPhone('');
+      setContactMsg('');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to send request. Please try again later.');
+    }
   };
 
   const triggerInAppCheckout = () => {
@@ -472,7 +489,7 @@ export default function Home() {
             <div className="border border-emerald-800/30 bg-gradient-to-b from-[#05110c]/90 to-[#030906] p-8 md:p-12 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors"></div>
               
-              <h3 className="font-black text-2xl text-white mb-8 tracking-wide">Request Callback / Consult</h3>
+              <h3 className="font-black text-2xl text-white mb-8 tracking-wide">Contact Us</h3>
               
               <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div>
@@ -514,7 +531,7 @@ export default function Home() {
                   type="submit" 
                   className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black py-4.5 rounded-2xl font-black text-sm shadow-[0_4px_20px_rgba(245,158,11,0.15)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer uppercase tracking-wider"
                 >
-                  Start Live Consultation Chat 💬
+                  Contact Us
                 </button>
               </form>
             </div>
