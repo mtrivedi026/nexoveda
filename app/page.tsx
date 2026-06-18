@@ -424,7 +424,7 @@ export default function Home() {
               <div className="space-y-4">
                 <span className="text-xs uppercase font-extrabold tracking-widest text-yellow-400 bg-yellow-500/5 border border-yellow-500/20 px-3 py-1 rounded-full">Nexoveda Client Desk</span>
                 <h2 className="text-4xl md:text-6xl font-black text-white leading-tight">
-                  Confidential Consultation
+                  Contact Us
                 </h2>
                 <p className="text-gray-400 leading-relaxed text-base md:text-lg">
                   Need clinical stamina recommendations or want to speak about chronic physical exhaustion privately? Submit details to match with a dedicated, anonymous advisor.
