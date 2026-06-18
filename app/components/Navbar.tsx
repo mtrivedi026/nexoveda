@@ -47,7 +47,6 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center justify-center gap-4 xl:gap-6 text-[10px] xl:text-xs font-black uppercase tracking-wider text-emerald-100/75 flex-1 px-2 whitespace-nowrap">
             <Link href="/" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Home</Link>
             
-            <Link href="/about" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">About Us</Link>
             <Link href="/shop" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">Shop Catalog</Link>
             
             {!isStaff && (
@@ -109,6 +108,8 @@ export default function Navbar() {
                 )}
               </div>
             )}
+            
+            <Link href="/about" className="hover:text-yellow-400 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300">About Us</Link>
           </div>
 
           {/* Action Area */}
@@ -186,7 +187,6 @@ export default function Navbar() {
           <div className="flex flex-col gap-4 text-xs font-black uppercase tracking-wider text-emerald-100/80">
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">Home</Link>
             
-            <Link onClick={() => setIsMobileMenuOpen(false)} href="/about" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">About Us</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} href="/shop" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">Shop Catalog</Link>
             
             {!isStaff && (
@@ -235,6 +235,8 @@ export default function Navbar() {
               )}
             </div>
             )}
+            
+            <Link onClick={() => setIsMobileMenuOpen(false)} href="/about" className="hover:text-yellow-400 py-2 border-b border-emerald-900/20">About Us</Link>
             
             {/* Mobile Logged In User Info */}
             {user && (
